@@ -4,4 +4,12 @@ Halsbe is my own, purely experimental programming language.
 Goals:
 * nice syntax that is not prohibitive of optimizations
 * unique/new ways to approach things (e.g. conditional traits)
+* implement an efficient and modern VM tailored for halsbe in D
+* implement an efficient VM using LLVM
 * more things to come :-p
+
+At the moment, the interesting stuff can be found in (roughly in this order):
+* /implementation/core -> core is halsbe written in halsbe
+* /implementation/lib/halsbe -> implementation of the prototype parser & vm
+* /ideas -> my thoughts spilled on digital paper
+* /discussions -> exchanges with others on irc or other media (only added with consent)
