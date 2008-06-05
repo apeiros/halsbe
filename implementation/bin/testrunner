@@ -1,0 +1,21 @@
+		puts "Finished."
+		puts "state: #{@cs}, pos: #{@pos}, pe: #{@pe}; #{position}"
+		puts "Read:\n  Shebang: #{@shebang.inspect}\n  Meta: #{@meta.inspect}"
+	
+		#pp @tokens
+		
+		token_data = @tokens.map{|t|t.data(data)}.join('')
+		puts "\nTokens (#{token_data.chomp==data.chomp ? 'success' : 'failure'}):"
+		puts @tokens.map { |t| "%s(%p)"%[t.class, t.data(data)] }
+		
+		puts "\nTokendata:"
+		puts token_data
+	
+		puts "\nStack:"
+		pp @stack
+	
+		puts "\nAST:"
+		pp @ast
+		
+Parser.parse_file(File.dirname(__FILE__)+'/../code/helloworld.halsbe')
+		

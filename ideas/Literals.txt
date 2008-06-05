@@ -1,0 +1,44 @@
+Literals:
+	Scalars
+		Pseudo
+			nil     // represents 'no data'
+			default // when passed as argument it becomes substituted with that arguments default value,
+			        // otherwise exactly like nil
+			false   // logical false value
+			true    // logical true value
+		Numbers
+			Integer   255 0b11111111 0xff 0377
+			Rational  12/5
+			Decimal   12.3
+			Float     12.3e0
+			Imaginary 2i
+			Complex   1+2i
+		Date/Time
+			Date      2007-12-01
+			Time      12:36:05.12325
+		Units
+			12.hours, 15.meter(2)*5.meters // => <75 meters ^ 3>, not really literals
+		Stringlike
+			Binary           %o"data"
+			Base64           %b64"data"
+			Hex              %h"data" // binary data hex encoded
+			Encoded/Collated %s(UTF8,UnicodeCI)"foobar" // %s(encoding,collation)
+			Regex            %r(flags){expression}
+			Symbol           'foo', "foo"
+			Path             %p"/foo/bar"
+			URI              %uri"http://example.com", %uri"ftp://example.com"
+		Range
+			[start,step,end] // inclusive start, inclusive end, steps by step, step can be a callable object
+			[start,,end]     // inclusive start, inclusive end, will step by previous.next/previous.prev
+			[start,step,]    // inclusive start, will infinitely step by steps size (only forward)
+			[start,,]        // inclusive start, will infinitely step using previous.next (only forward)
+			[,step,end]      // inclusive end,   will infinitely step by steps size (only backward)
+			[start,,]        // inclusive start, will infinitely step using previous.prev (only backward)
+			[start>,,<end]   // exclusive start, exclusive end
+	
+	Collections
+		List  (foo, bar, baz) // in some places without ()
+		Dict  (foo: bar, baz: quuz) // in some places without ()
+		Array %a{foo, bar}
+		      %a{0: foo, 4: bar} // => %a{foo, nil, nil, nil, bar}
+		Hash  %h{foo: bar}

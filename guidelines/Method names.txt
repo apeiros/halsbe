@@ -1,0 +1,40 @@
+Special methods:
+	Meaning:
+		<=>:   together with Comparable mixin defines <, <=, =, >=, >, between
+		same:  object identity, final method of Object
+		===:   alias for same
+		is:    object equality, also used for methods identifying an object
+					 (Hash, Array#delete, Various#include, ...)
+					 If two objects are reported to be equal by is, they must also
+					 have the same hash value (see hash method)
+		==:    alias for is
+		equal: object sort-comparison, the objects have the same sort weight,
+					 can be infered from <=>
+		=:     alias for equal
+		
+		hash:  hash key of this object.
+					 objects for whom 'is'/'==' returns true *must* have the same hash key
+	
+	Callbacks:
+		
+
+	
+
+Method naming:
+	noun:
+		The method returns a property of the object.
+		Examples:
+			String#length
+			File#name
+
+	adjective:
+		The method returns a mutated version of the same object, that means the
+		class of the receiver and the result are identical.
+		Examples:
+			String#stripped
+
+	verb:
+		"All other cases".
+		Examples:
+			
+			

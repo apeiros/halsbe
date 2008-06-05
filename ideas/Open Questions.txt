@@ -1,0 +1,9 @@
+Open Questions:
+- disallow other characters in the same line after --- in doc comments?
+- should 1,2,3 and (1,2,3) be equal?
+	currently: no
+	1,2,3   =  *(1,2,3)
+	(1,2),3 <> 1,2,3
+	*(1,2),3 = 1,2,3
+- how to use labels inside of "*" and "?"? (treetop)
+- what do I allow for rationals? Rational/Rational ok? Float/Float ok?

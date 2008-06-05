@@ -1,0 +1,50 @@
+Parens:
+	(): grouping
+	{}: code blocks, secondary literals
+	[]: -
+	':  -
+	":  -
+	`:  -
+
+Prefix operators
+	: namespaced variable
+	$ local variable
+	! bound variable (closures)
+	@ instance variable
+
+Interpunctuation:
+	.: method invocation
+	,: list separator
+	?: postfix: converts to boolean
+	!: -
+	:: Namespace separator
+	;: Newline equivalent
+
+Boolean:
+	not
+	and, or
+	implies
+	xor, nor
+
+Mathematical:
+	+: add
+	-: subtract
+	*: multiply
+	/: divide
+	%: modulo
+	^: to the power of
+	<: smaller than
+	=: equal (comparative equality, alias to .equal)
+	>: bigger than
+	
+	==: equality (alias for .is)
+	===: identity (alias for .same)
+
+Others
+	\: escape character in literals
+	$: -
+	@: -
+	&: -
+	#: -
+	|: -
+	~: -

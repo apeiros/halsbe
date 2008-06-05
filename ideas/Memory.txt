@@ -1,0 +1,48 @@
+MEMORY
+	* Memory is organized in fragments
+	* A fragment is a continouos bit of memory
+	* Fragments can grow or shrink (unless their grow mode is fixed)
+	* Fragments can have one of four grow modes:
+		* Fixed: never grows or shrinks
+		* Grows: grows/shrinks in one direction (always at the end)
+		* Both:  grows/shrinks in both directions
+		* Unknown: the behaviour of the fragment is unknown (will usually set it to both)
+		These modes help in the allocation process to find a suitable fragment
+	* Every object has its own memory fragment
+	* An object may only ever write to its own fragment
+
+	Pseudo methods
+		memory.reference_size:    bytes used to reference an object
+			 0
+		memory.object_size:       bytes used for a basic object
+			 0
+		memory.capacity:          bytes allocated for this object
+			 0
+		memory.reference_capacity capacity/reference_size
+			 0
+		memory.object_capacity    capacity/object_size
+			 0
+		memory.maxgrow            the suggested maximum size to grow an object (MaxGrow>>8 or so)
+			 0
+		memory.grow               grow the memory (append)
+			 1 size
+		memory.shrink             shrink the memory (chop off from the end)
+			 1 size
+		memory.front_grow         grow the memory (prepend)
+			 1 size
+		memory.front_shrink       shrink the memory (chop off from the start)
+			 1 size
+		memory.resize             grow or shrink the memory
+			 1 size
+		memory.front_resize       front_grow or front_shrink the memory
+			 1 size
+		memory.store_reference    store the reference to an object
+			 2 offset, object
+		memory.read_reference     get an object back from a stored reference
+			 1 offset
+		memory.read_object_list   convert a range of objects to a list of objects
+			 2 offset, object_count
+		memory.store_object_list  store the references of every object of a list
+			 2 offset, list
+		memory.copy               copy memory from another objects memory fragment
+			 4 from_obj, read_offset, read_length, write_offset

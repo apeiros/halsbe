@@ -1,0 +1,93 @@
+What is needed?
+	Input (stdin, argv, option parsing, file, network, fileformats, database)
+	Output (stdout, stderr, logging, file, network, fileformats, database)
+	Logging (stdout, stderr, notification, file, ...)
+	FS Interaction (path, file, directory, volume, gzip, bzip, tar, rar, 7zip, dmg, ...)
+	OS Interaction (processes, interfaces, hardware, ...)
+	Networking ((ip, unix, ...)sockets, distributed halsbe, dns, http, ftp, ssl, telnet, (e)smtp, pop, imap, soap, xmlrpc, rsync, ...)
+	Interaction (terminal, gui)
+	Media (audio, video, 2d, 3d)
+	Generic Datastructures (array, hash, ...)
+	Specific Datastructures (numbers, datetime, duration, color, geometric shapes, ...)
+	Persistency (file, database, xml, yaml, json, csv, object serialization)
+	Formats (xml, yaml, json, csv, rss, html, rdf, ...)
+	Encodings (iso-8859-*, utf-*, base64, xml escaping, html escaping, uri escaping, binary formats for numbers, ...)
+	Concurrency (coroutine, thread, fiber, mutex, condition variable, barrier, monitor, actor, ...)
+	Tempfile/-Dir
+	Exceptions
+
+Core classes, modules & singletons:
+	Class (module) - basic methods for prototypes
+	Block (class) - basic piece of block with lookup-tables for: locals, bound-locals (from other scopes)
+	Method < Block (class) - adds pseudo-variables: owner; adds lookup-tables for: instance-variables
+	UnboundMethod < Block (class) - adds the information whether it can be run without being bound
+	Object (class) - basic object features (object_id, prototype)
+	StandardObject (module) - useful object features
+	Application (singleton) - information about current runtime (scriptpath, pid, childprocesses, ...)
+	Current (singleton) - information
+	ReadableIO (module) - read methods for IOs
+	WritableIO (module) - write methods for IOs
+	Path (class) - represents paths on the system, also knows about working dir, libraries, executable, ...
+	PathList (class) - a collection of paths with collective testing methods like exists, file_exists, ...
+	File (class) - handling filedata
+	List (class)
+	Array (class)
+	Dict (class)
+	Hash (class)
+
+Datastructures
+	Generic
+		Struct
+		Shelve (OpenStruct)
+	
+		Stack
+		Array
+		SortedArray (binary search/insertion)
+		ArrayMap
+	
+		HashMap (unordered hash)
+		HashList (ordered hash)
+	
+		Tree(?)
+		Heap
+		Queue (priority-queue)
+	
+		String
+		Rope
+		GapBuffer
+	
+		Set
+		OrderedSet
+		SortedSet
+	
+	Specific
+		Integer
+		Rational
+		Decimal
+		Float
+		Complex
+	
+		Vector (optimizations for method-calls)
+		Matrix (")
+		Tensor (")
+	
+		Path
+		URI
+		URL
+		IP (v4, v6)
+		DNSEntry
+	
+		Time
+		Date
+		Duration
+		Timespan/Interval
+		Recurrence
+		
+		Color
+		Image/Picture
+		Video?
+		SampledAudio (khz, channels, ...)
+
+Networking classes
+	Socket
+		

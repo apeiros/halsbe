@@ -1,0 +1,73 @@
+VM
+
+Premisses
+	-Tiered memory
+	-Sacrifice memory for speed
+
+Built in Functionality
+	-Jumps -> looping, branching
+	-Lookup Tables (Hash/AssocArray/...) -> method, constant, traits, conditionals lookups
+	-Queue (Array/Linked List) -> locking/threading
+	-Heap/Tree -> caching policy, GC
+	-Profiling info, e.g. accesses on objs/methods, timing
+	-Stack
+
+Counter
+	a) Double Linked List
+	b) Heap
+	c) Tree
+	d) Array (kept sorted)
+
+Counter reset
+	a) Fixed factor (e.g. 32 for 1byte -> shift by 5)
+	   with heap will be O(n)
+	b) Ranking (maybe * some faktor), with sorted structure should be O(1) for determining the rank,
+	   with heap will be O(nlogn)
+	c) Median, with sorted structure should be O(logn) for determining the median
+	d) Geometric mean of min/max, should be O(1) for determining the mean, but with high K due to sqrt
+
+Measures
+	-avg. age per access
+		[last access, total age, total accesses]
+	-total accesses
+	-avg. accesses per time
+		[creationtime, total accesses]
+	-avg. accesses per timeslot
+		[slot, accesses in this slot, total slots, total accesses]
+
+Memory
+	segmented in pieces of size 2**n
+	smallest segment of the same or bigger size is taken
+	keep track of segment "border" to reunify freed segments
+	allocate_and_offset: optimize cases where there's memory free "in front" of the position to move -> no memcpy necessary
+
+GC
+	temporary objects:
+		-local variables in methods
+		-receiver in chain
+
+	
+	a = [1,2,3] # id(1) referenced by 'a'
+		id(1) -> ['a']
+	b = [a]     # id(2) referenced by 'b', id(1) referenced by 'a', id(2)
+		id(1) -> ['a', id(2)]
+		id(2) -> ['b']
+	a << b
+		id(1) -> ['a', id(2)]
+		id(2) -> ['b', id(1)]
+	
+	
+	x = []
+	y = [x]
+	z = [y]
+	x << z
+		id(1) -> ['x']
+	
+		id(2) -> ['y']
+		id(1) -> ['x', id(2)]
+	
+		id(3) -> ['z']
+		id(2) -> ['y', id(3)]
+		id(1) -> ['x', id(2), <via id(2) id(3)>]
+	
+		id(1) -> ['x', id(2), <via id(2): id(3)>, <via id(2),id(3): id(1)>]

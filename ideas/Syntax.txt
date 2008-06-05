@@ -1,0 +1,44 @@
+SYNTAX
+
+Control Structures:
+	(if | unless) <condition>
+		statement
+	[else [(if | unless) <condition>]
+		statement
+	]
+	
+	expression (if | unless) <condition>
+	
+	case <condition>
+		[(when | through) <condition>
+			statement
+		]
+		[else
+			statement
+		]
+	
+	(while | until | once_while | once_until) <condition>
+		statement
+	[else
+		statement
+	]
+	
+	forever
+		statement
+	
+	do
+		statement
+	[intercept [<exception-class(es)>] [|store_exception|]
+		statement
+	]
+	[rescue [<exception-class(es)>] [|store_exception|]
+		statement
+	]
+	[else
+		statement
+	]
+	[ensure
+		statement
+	]
+	
+	

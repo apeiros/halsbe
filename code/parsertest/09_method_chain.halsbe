@@ -1,0 +1,27 @@
++++
+
+$local_variable.my_method
+$local_variable.my_method.chained
+$local_variable.my_method(1, 2, 3)
+$local_variable.my_method(1, 2, 3).chained
+$local_variable.my_method(1, a: 2, b: 3)
+$local_variable.my_method(1, a: 2, b: 3).chained
+$local_variable->my_method
+$local_variable->my_method.chained
+$local_variable.my_method->chained
+$local_variable->my_method->chained
+$local_variable->my_method(1, 2, 3)
+$local_variable->my_method(1, 2, 3).chained
+$local_variable.my_method(1, 2, 3)->chained
+$local_variable->my_method(1, 2, 3)->chained
+$local_variable->my_method(1, a: 2, b: 3)
+$local_variable->my_method(1, a: 2, b: 3).chained
+$local_variable.my_method(1, a: 2, b: 3)->chained
+$local_variable->my_method(1, a: 2, b: 3)->chained
++++
+
+// free arguments are not yet supported
+$local_variable.my_method 1
+$local_variable.my_method 1, 2, 3
+$local_variable->optional
+$local_variable->optional 1, 2, 3

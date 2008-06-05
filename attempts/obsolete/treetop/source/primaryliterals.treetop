@@ -1,0 +1,69 @@
+grammar PrimaryLiterals
+	rule primary_literal
+		datetime / numeric
+	end
+
+	rule datetime
+		date_and_time / date / time
+	end
+	
+	rule date_and_time
+		date "T" time
+	end
+	
+	rule date
+		digit digit digit digit "-" digit digit "-" digit digit
+	end
+	
+	rule time
+		digit digit ":" digit digit ":" digit digit (. digit+)? ([+-] digit digit digit digit)?
+	end
+	
+	rule numeric
+		complex / scalar_numeric
+	end
+	
+	rule complex
+		(scalar_numeric [+-] / [+-])? scalar_numeric [IiJj]
+	end
+
+	rule scalar_numeric
+		rational / float / decimal / integer
+	end
+	
+	rule rational
+		integer "/" integer
+	end
+
+	rule float
+		(decimal / integer10) [Ee] integer10
+	end
+	
+	rule decimal
+		integer10 "." digit+
+	end
+	
+	rule integer
+		integer2 / integer8 / integer16 / integer10
+	end
+	
+	rule integer2
+		[+-]? "0b" [01]+
+	end
+	
+	rule integer8
+		[+-]? "0" [0-7]+
+	end
+	
+	rule integer10
+		[+-]? ("0" / [1-9] digit*)
+	end
+	
+	rule integer16
+		[+-]? ("0x") [0-9A-Fa-f]+
+	end
+
+	rule digit
+		[0-9]
+	end
+end

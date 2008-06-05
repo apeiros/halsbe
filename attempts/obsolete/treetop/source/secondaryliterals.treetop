@@ -1,0 +1,64 @@
+grammar SecondaryLiterals
+	rule secondary_literal
+		"%" secondary_literal_type secondary_literal_arguments (
+			secondary_curly_braces
+			/ secondary_parens
+			/ secondary_brackets
+			/ secondary_angle
+			/ secondary_squote
+			/ secondary_dquote
+			/ secondary_backtick
+			/ secondary_slash
+			/ secondary_hash
+		)
+		<SecondaryLiteral>
+	end
+	
+	rule secondary_literal_type
+		([A-Za-z_] [A-Za-z0-9_]*)?
+	end
+	
+	rule secondary_literal_arguments
+		"(" (!")" . / '\)')* ")"
+	end
+	
+	rule secondary_curly_braces
+		"{" secondary_curly_braces "}" /
+		(!"}" . / '\}')*
+	end
+
+	rule secondary_parens
+		"(" secondary_parens ")" /
+		(!")" . / '\)')*
+	end
+
+	rule secondary_brackets
+		"[" secondary_brackets "]" /
+		(!"]" . / '\]')*
+	end
+
+	rule secondary_angle
+		"<" secondary_angle ">" /
+		(!">" . / '\>')*
+	end
+
+	rule secondary_squote
+		"'" (!"'" . / "\\'")* "'"
+	end
+
+	rule secondary_dquote
+		'"' (!'"' . / '\"')* '"'
+	end
+
+	rule secondary_backtick
+		'`' (!'`' . / '\`')* '`'
+	end
+
+	rule secondary_slash
+		'/' (!'/' . / '\/')* '/'
+	end
+
+	rule secondary_hash
+		'#' (!'#' . / '\#')* '#'
+	end
+end

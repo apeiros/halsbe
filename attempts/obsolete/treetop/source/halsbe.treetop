@@ -1,0 +1,145 @@
+grammar Halsbe
+	include PrimaryLiterals
+	rule document
+		meta_data:meta_data
+		meta_separator
+		code:code
+		(
+			meta_separator
+			inline_data:.*
+		)?
+		<Document>
+	end
+	
+	rule meta_data
+		(shebang:shebang "\n")?
+		meta_tuple:(meta_tuple)*
+		<MetaData>
+	end
+	
+	rule shebang
+		"#!" (!"\n" .)*
+	end
+	
+	rule meta_tuple
+		meta_key:meta_key
+		meta_sep:(":" " "*)
+		meta_value:meta_value
+		"\n"
+	end
+	
+	rule meta_key
+		[A-Za-z_] [A-Za-z0-9_]*
+	end
+	
+	rule meta_value
+		(!"\n" .)*
+	end
+	
+	rule meta_separator
+		"+++\n"
+	end
+
+	rule code
+		(empty_line / doc_comment / statement)* <Code>
+	end
+	
+	rule empty_line
+		whitespace* "\n" <EmptyLine>
+	end
+	
+	rule doc_comment
+		whitespace* "---" [\x00-\x09\x0b-\xff]* "\n" # separator
+		comment_text_nodes:((!"---" (!"\n" .)* "\n")*) # a comment line must not start with a separator
+		whitespace* "---" [\x00-\x09\x0b-\xff]* "\n" # separator
+		<DocComment>
+	end
+
+	rule statement
+		(expression consume_eol)+
+		<Statement>
+	end
+	
+	rule eol_with_comment
+		(whitespace+ "//" (!"\n" .)*)? # comment
+		whitespace* eol
+	end
+	
+	rule consume_eol
+		"\n" / !.
+	end
+	
+	# does not consume the newline
+	rule eol
+		&"\n" / !.
+	end
+	
+	rule expression
+		chain
+	end
+	
+	rule chain
+		receiver? (required_call / optional_call)+ <Chain>
+	end
+	
+	rule receiver
+		value
+	end
+	
+	rule required_call
+		"." methodname:bareword arguments <RequiredCall>
+	end
+
+	rule optional_call
+		"." methodname:bareword arguments <OptionalCall>
+	end
+
+	rule value
+		variable / literal
+	end
+	
+	rule variable
+		constant / instance_variable / local_variable / bound_variable
+	end
+	
+	rule constant
+		":" bareword
+		<Constant>
+	end
+	
+	rule instance_variable
+		"@" bareword
+		<InstanceVariable>
+	end
+	
+	rule local_variable
+		"$" bareword
+		<LocalVariable>
+	end
+	
+	rule bound_variable
+		"!" bareword
+		<BoundVariable>
+	end
+	
+	rule bareword
+		[A-Za-z_] [A-Za-z0-9_]* <Bareword>
+	end
+	
+	rule arguments
+		"(" (argument (", " argument)*)? ")" <ArgumentList>
+	end
+	
+	rule argument
+		(bareword ": ")? value <Argument>
+	end
+
+	rule whitespace
+		" " / "\t" <Whitespace>
+	end
+
+	rule literal
+		primary_literal / secondary_literal
+	end
+	
+end

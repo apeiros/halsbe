@@ -1,0 +1,6 @@
+VARIABLES
+
+$local
+!bound
+@instance
+:namespaced

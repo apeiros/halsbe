@@ -1,0 +1,12 @@
++++
+
+$blob:        %b"a blob"
+$iso8859_1:   %s('iso-8859-15')"an iso-8859-15 encoded string"
+$utf8_string: %u"utf 8 string" // utf8 string
+$path:        %p'/this/is/a/filepath'
+$uri:         %uri'http://example.com'
+$array1:      %a{'an', 'array'}
+$array2:      %a{1: 'an', 5: 'array'}
+$array3:      %a(1){'an', 'array', 'with', 'different', 'start index'}
+$dict:        %d{'key': 'value', 'anotherkey': 'value'}
+$hash:        %h{'key': 'value', 'anotherkey': 'value'}

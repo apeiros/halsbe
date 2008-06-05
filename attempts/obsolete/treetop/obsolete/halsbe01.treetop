@@ -1,0 +1,260 @@
+grammar Halsbe
+	rule document
+		meta_data:meta_data
+		meta_separator
+		code:code
+		(
+			meta_separator
+			inline_data:.*
+		)?
+		<Document>
+	end
+	
+	rule meta_data
+		shebang:(shebang "\n")?
+		meta_tuple:(meta_tuple)*
+		<MetaData>
+	end
+	
+	rule shebang
+		"#!" (!"\n" .)*
+	end
+	
+	rule meta_tuple
+		meta_key:meta_key
+		meta_sep:(":" " "*)
+		meta_value:meta_value
+		"\n"
+	end
+	
+	rule meta_key
+		[A-Za-z_] [A-Za-z0-9_]*
+	end
+	
+	rule meta_value
+		(!"\n" .)*
+	end
+	
+	rule meta_separator
+		"+++\n"
+	end
+
+	rule code
+		(empty_line / doc_comment / statement)* <Code>
+	end
+	
+	rule empty_line
+		whitespace* "\n" <EmptyLine>
+	end
+	
+	rule doc_comment
+		whitespace* "---" [\x00-\x09\x0b-\xff]* "\n" # separator
+		comment_text_nodes:((!"---" (!"\n" .)* "\n")*) # a comment line must not start with a separator
+		whitespace* "---" [\x00-\x09\x0b-\xff]* "\n" # separator
+		<DocComment>
+	end
+	
+	rule statement
+		expression eol_with_comment consume_eol
+		<Statement>
+	end
+	
+	rule eol_with_comment
+		(whitespace+ "//" (!"\n" .)*)? # comment
+		whitespace* eol
+	end
+	
+	rule consume_eol
+		"\n" / !.
+	end
+	
+	# does not consume the newline
+	rule eol
+		&"\n" / !.
+	end
+	
+	rule expression
+		chain / value
+	end
+	
+	rule chain
+		(value? required_call) <RequiredCall>
+		/
+		(value? optional_call) <OptionalCall>
+	end
+	
+	rule optional_call
+		"->" bareword arguments?
+	end
+
+	rule required_call
+		"." bareword arguments?
+	end
+
+	rule value
+		variable / literal # / ("(" expression ")")
+	end
+	
+	rule variable
+		constant / instance_variable / local_variable / bound_variable
+	end
+	
+	rule constant
+		":" bareword
+		<Constant>
+	end
+	
+	rule instance_variable
+		"@" bareword
+		<InstanceVariable>
+	end
+	
+	rule local_variable
+		"$" bareword
+		<LocalVariable>
+	end
+	
+	rule bound_variable
+		"!" bareword
+		<BoundVariable>
+	end
+	
+	rule bareword
+		[A-Za-z_] [A-Za-z0-9_]*
+	end
+	
+	rule arguments
+		"(" (argument (", " argument)*)? ")"
+	end
+	
+	rule argument
+		(bareword ": ")? value
+	end
+
+	rule whitespace
+		" " / "\t" <Whitespace>
+	end
+
+	rule literal
+		primary_literal / secondary_literal
+	end
+
+	rule primary_literal
+		datetime / numeric
+	end
+
+	rule datetime
+		date_and_time / date / time
+	end
+	
+	rule date_and_time
+		date "T" time
+	end
+	
+	rule date
+		digit digit digit digit "-" digit digit "-" digit digit
+	end
+	
+	rule time
+		digit digit ":" digit digit ":" digit digit (. digit+)? ([+-] digit digit digit digit)?
+	end
+	
+	rule numeric
+		complex / scalar_numeric
+	end
+	
+	rule complex
+		(scalar_numeric [+-] / [+-])? scalar_numeric [IiJj]
+	end
+
+	rule scalar_numeric
+		rational / float / decimal / integer
+	end
+	
+	rule rational
+		integer "/" integer
+	end
+
+	rule float
+		(decimal / integer10) [Ee] integer10
+	end
+	
+	rule decimal
+		integer10 "." digit+
+	end
+	
+	rule integer
+		integer2 / integer8 / integer16 / integer10
+	end
+	
+	rule integer2
+		[+-]? "0b" [01]+
+	end
+	
+	rule integer8
+		[+-]? "0" [0-7]+
+	end
+	
+	rule integer10
+		[+-]? ("0" / [1-9] digit*)
+	end
+	
+	rule integer16
+		[+-]? ("0x") [0-9A-Fa-f]+
+	end
+	
+	rule secondary_literal
+		"%" secondary_squote #(
+		#	secondary_curly_braces
+		#	/ secondary_parens
+		#	/ secondary_brackets
+		#	/ secondary_angle
+		#	/ secondary_squote
+		#	/ secondary_dquote
+		#	/ secondary_backtick
+		#	/ secondary_slash
+		#	# / secondary_equal_chars # can't implement right now, need to match backrefs
+		#)
+		<SecondaryLiteral>
+	end
+	
+	rule secondary_curly_braces
+		"{" secondary_curly_braces "}" /
+		(!"}" . / '\}')*
+	end
+
+	rule secondary_parens
+		"(" secondary_parens ")" /
+		(!")" . / '\)')*
+	end
+
+	rule secondary_brackets
+		"[" secondary_brackets "]" /
+		(!"]" . / '\]')*
+	end
+
+	rule secondary_angle
+		"<" secondary_angle ">" /
+		(!">" . / '\>')*
+	end
+
+	rule secondary_squote
+		"'" (!"'" . / "\\'")* "'"
+	end
+
+	rule secondary_dquote
+		'"' (!'"' . / '\"')* '"'
+	end
+
+	rule secondary_backtick
+		'`' (!'`' . / '\`')* '`'
+	end
+
+	rule secondary_slash
+		'/' (!'/' . / '\/')* '/'
+	end
+
+	rule digit
+		[0-9]
+	end
+end

@@ -1,0 +1,14 @@
+Object
+	instance_variables
+	instance_variable(name)
+	instance_variable:(name, value)
+	class
+	traits
+	conditionals
+	features
+	methods
+	queries
+	feature(*name)
+	method:(name, body, precondition, postcondition)
+	query:(name)
+	responds_to(*name)

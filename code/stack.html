@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>stack.halsbe</title>
+	<meta name="generator" content="BBEdit 8.7" />
+<style type="text/css">
+body {
+	background-color: #f9f9f9;
+}
+*.code
+{
+	white-space: pre;
+	font-family: monospace;
+}
+*.code *.metakey {
+}
+*.code *.metavalue {
+	font-weight: bold;
+}
+*.code *.symbol {
+	color: #030;
+	background-color: #eef9ee;
+}
+*.code *.ivar {
+	color: #009;
+}
+*.code *.comment_doc_start {
+	color: #666;
+	background-color: #fff;
+	border-left: 5px solid #dd0;
+	padding-left: 5px;
+	display: block;
+	font-family: sans-serif;
+	white-space: normal;
+	border-top: 1px solid #e9e9e9;
+	border-right: 1px solid #e9e9e9;
+}
+*.code *.comment_doc {
+	color: #666;
+	background-color: #fff;
+	border-left: 5px solid #dd0;
+	padding-left: 5px;
+	display: block;
+	font-family: sans-serif;
+	white-space: normal;
+	border-right: 1px solid #e9e9e9;
+}
+*.code *.comment_doc_end {
+	color: #666;
+	background-color: #fff;
+	border-left: 5px solid #dd0;
+	padding-left: 5px;
+	display: block;
+	font-family: sans-serif;
+	white-space: normal;
+	border-bottom: 1px solid #e9e9e9;
+	border-right: 1px solid #e9e9e9;
+}
+</style>
+</head>
+<body>
+<div class="code">
+<span class="shebang">#!/usr/bin/env halsbe</span>
+<span class="metakey">author</span>:<span class="metavalue">   me</span>
+<span class="metakey">revision</span>:<span class="metavalue"> 1</span>
+<span class="metakey">encoding</span>:<span class="metavalue"> utf-8</span>
+<span class="metakey">import</span>:<span class="metavalue">   com.halsbe.slnode</span>
+<span class="metasep">+++</span>
+
+<span class="comment_doc_start">---
+</span><span class="comment_doc">class: Stack
+This is documentation comment. Should comment the *what*.
+The marker is optional and mostly intended for 'virtual' methods.
+The default doc tool accepts markup here.
+The default doc-coverage tool will notice this kind of comment.
+Should either be before the class, trait or method or have the marker.
+</span><span class="comment_doc_end">---</span>
+<span class="method">class</span> <span class="symbol">'Stack'</span>:
+
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  Notice that thanks to pre- and post-conditions, you merely
+  write some statements here to execute.
+  The doc tools also enable you to extract the specification.
+  </span><span class="comment_doc_end">---</span>
+  specification: // instance method 'specification' on Class
+    <span class="symbol">"New stack is empty"</span>: // block argument with Symbol "New stack is empty"
+      stack: Stack.new
+      stack.empty? and stack.length.zero?
+
+    <span class="symbol">"Accepts an element to be added"</span>:
+      stack: Stack.new
+      stack.push 42
+  
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  The class invariant must be maintained before and after any
+  method call. If a method call changes the state of the object
+  in a way that the invariant is violated, it will raise.
+  </span><span class="comment_doc_end">---</span>
+  invariants:
+    <span class="symbol">"Positive length or empty"</span>:
+      <span class="ivar">@length</span> >= 0
+
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  The initialize method is called on newly created objects and
+  serves to initialize it.
+  The first argument to 'method' is the method name, the second
+  argument is 'body'.
+  Via named arguments you can change the order, a good choice is
+  precondition, body, postcondition
+  </span><span class="comment_doc_end">---</span>
+  initialize:
+    body:
+      <span class="ivar">@list</span>:   nil
+      <span class="ivar">@length</span>: 0
+
+    postconditions:
+      <span class="symbol">"Is empty"</span>:
+        .empty?
+  
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  Queries are a vital part of halsbe. Queries have the property
+  of not changing the state of an object. As such they are the only
+  allowed methods in pre- and postconditions.
+  </span><span class="comment_doc_end">---</span>
+  query <span class="symbol">'empty?'</span>:
+    body:
+      return <span class="ivar">@length</span> = 0 // `not @list` would work the same
+
+    postconditions:
+      <span class="symbol">"Is a boolean"</span>:
+        returned.is? Boolean
+  
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  The number of items on the stack.
+  The 'returned' in the postcondition is a keyword.
+  </span><span class="comment_doc_end">---</span>
+  query <span class="symbol">'length'</span>:
+    body:
+      return <span class="ivar">@length</span>
+
+    postconditions:
+      <span class="symbol">"Is an integral number"</span>:
+        returned.is? Integer
+      <span class="symbol">"Is positive or zero"</span>:
+        returned >= 0
+  
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  Returns the top element.
+  Unlike in some other languages with contracts we don't need to
+  specify that top should not mutate the stack since it being a query
+  already ensures that.
+  </span><span class="comment_doc_end">---</span>
+  query <span class="symbol">'top'</span>:
+    return .empty? ? nil : <span class="ivar">@list</span>.value
+
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  methods are allowed to change the state of the object and to return
+  a value.
+  The 'old' in the postconditions is a keyword, it retains the state
+  of the object before the method call.
+  </span><span class="comment_doc_end">---</span>
+  method <span class="symbol">'push'</span>:
+    body: |item| // it's the body block that accepts the arguments
+      <span class="ivar">@list</span>: SLNode.new(item, <span class="ivar">@list</span>)
+
+    postconditions:
+      <span class="symbol">"Added item is on top"</span>:
+        .top.same?(item)
+      <span class="symbol">"Length is incremented by one"</span>:
+        old.length + 1 = <span class="ivar">@length</span>
+      <span class="symbol">"Stack is not empty"</span>:
+        not .empty?
+
+  <span class="comment_doc_start">---
+</span><span class="comment_doc">  The behaviour of the class should be here.
+  remove and return the top element of the stack.
+  </span><span class="comment_doc_end">---</span>
+  method <span class="symbol">'pop'</span>:
+    body:
+      if <span class="ivar">@list</span>
+        return: <span class="ivar">@list</span>.value // implicit return value now is @list.value
+        <span class="ivar">@list</span>:  <span class="ivar">@list</span>.link
+      else
+        <span class="ivar">@list</span>: nil
+
+    postconditions:
+      <span class="symbol">"Length is decremented by 1 for non-empty lists"</span>:
+        old.empty? or old.length - 1 = <span class="ivar">@length</span>
+      <span class="symbol">"Length does not go below 0"</span>:
+        <span class="ivar">@length</span> >= 0
+      <span class="symbol">"Returns the old top value"</span>:
+        returned.same?(old.top)
+</div>
+</body>
+</html>

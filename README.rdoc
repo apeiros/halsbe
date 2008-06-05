@@ -1,0 +1,7 @@
+HALSBE
+
+Halsbe is my own, purely experimental programming language.
+Goals:
+* nice syntax that is not prohibitive of optimizations
+* unique/new ways to approach things (e.g. conditional traits)
+* more things to come :-p

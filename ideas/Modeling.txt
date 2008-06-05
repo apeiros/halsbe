@@ -1,0 +1,18 @@
+Method:
+	self, Value
+	owner, Value
+	
+	local_variables, Array
+	local_names, Array
+	return_value, Value
+
+	code, Bytecode
+
+
+Object
+	class,              Value
+	instance_variables, Array
+	instance_names,     Array # literal mentions in code are interned, names are only needed for lookups via methods
+
+Class
+	

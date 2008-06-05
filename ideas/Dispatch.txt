@@ -1,0 +1,9 @@
+METHOD CALL DISPATCH
+
+$obj.foo
+
+1) check if object referenced by $obj has a proprietary module (singleton class in ruby slang)
+	1a) if it has, dispatch to the properietary module of the object
+2) check if object referenced by $obj has a shared module (class in ruby slang)
+	2a) if it has, dispatch to the shared module of the object
+3) invoke method_missing on the object referenced by $obj

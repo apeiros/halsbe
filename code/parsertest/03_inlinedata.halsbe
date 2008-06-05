@@ -1,0 +1,8 @@
+#!/usr/bin/env halsbe
+author:   me
+revision: 1
+encoding: utf-8
+import:   com.halsbe.slnode
++++
++++
+This is the inline data

@@ -1,0 +1,14 @@
+Class
+	specification: -> define specifications (unit tests)
+		<description>: block
+	invariants: -> invariants for this class
+		<description>: block
+	method(name):
+		body: block
+		preconditions: block
+		postconditions: block
+	query(name):
+		body: block
+		postconditions: block
+	traits:
+		*: name of traits

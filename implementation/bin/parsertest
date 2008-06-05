@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+__DIR__ = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.expand_path(__DIR__+'/../lib'))
+
+require 'halsbe/parser'
+require 'ostruct'
+
+$OPT = OpenStruct.new :verbose => true
+
+include Halsbe
+if ARGV.empty? then
+	ARGV.replace(Dir[__DIR__+'/../../code/parsertest/[0-9][0-9]*.halsbe'])
+	$OPT.verbose = false
+end
+
+while file = ARGV.shift
+	filename = File.basename(file)
+	#abort("Usage: halsbe executefile") unless ARGV.last and File.exist?(ARGV.last)
+
+	begin
+		parser = Parser.file(file)
+		parser.parse
+	rescue Halsbe::Parser::Incomplete
+		puts "#{filename} - INCOMPLETE"
+		if $OPT.verbose then
+			puts "----------------------------------------"
+			puts parser.pretty
+			puts "----------------------------------------"
+			puts parser.scanner.rest
+		end
+	rescue Exception => e
+		if $OPT.verbose then
+			puts "#{filename} - FAIL", e, *e.backtrace
+		else
+			puts "#{filename} - FAIL: #{e}"
+		end
+	else
+		puts "#{filename} - SUCCESS"
+		puts parser.pretty if $OPT.verbose
+	end
+end

@@ -1,0 +1,19 @@
+Object:
+	Flagbits:
+		-read lock
+		-write lock
+		-singleton methods
+		-garbage collect
+		-frozen
+		-tainted
+Parallelism:
+	Locking bits, separate read/write locks
+Return values:
+	Defaults to owner
+	Can use returns: value to set the default return value
+	Use return value to immediatly return with value
+	Maybe let queries implicitly return last value (returning self makes little sense)
+Metadata, import:
+	Parallely import/parse, on unknown constants stop and register
+Query:
+	Automatically make them futures locking all state they access

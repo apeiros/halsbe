@@ -1,0 +1,19 @@
+private final Object#copy_memory(
+	from object,
+	from offset,
+	from size,
+	to offset
+	to size
+)
+
+private final Object#resize_memory(
+	new size
+)
+
+Class#allocate(
+	number of ivars,
+	number of bytes to allocate,
+	allocation type (see VM.allocate)
+)
+
+

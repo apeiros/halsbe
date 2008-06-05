@@ -1,0 +1,6 @@
++++
+
+$local_variable:       1
+!bound_variable:       2
+:namespaced::variable: 3
+@instance_variable:    4

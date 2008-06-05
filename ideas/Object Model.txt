@@ -1,0 +1,37 @@
+Object
+	* is a container for modules (mixins & conditionals)
+	* has a prototype
+	* has instance variables
+	* has a memory fragment
+	* can be frozen
+	* can be copied
+	* can delegate
+	* has a serialization
+
+Block
+	* is a piece of code
+	* can be called/run with arguments
+	* has a determined set of local variables
+	* has a determined set of bound variables
+	* has a serialization (bytecode)
+
+Method
+	* has a body which is a block
+	* has preconditions
+	* has postconditions
+	* has a self
+	* has an owner
+	* has a caller
+	* takes the same arguments as the body-block
+
+Module
+	* is an object
+	* has a method lookup table
+
+Class
+	* is a module
+	* is a container for modules
+	* is mixed into objects to provide delegation to a unified method lookup table for "instances"
+	  of the class
+
+

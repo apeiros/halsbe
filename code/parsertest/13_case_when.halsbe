@@ -1,0 +1,11 @@
++++
+
+case $expression
+	when $expression1:
+		.perform_case1
+	when $expression2:
+		.perform_case2
+	when $expression3:
+		.perform_case3
+	else:
+		.perform_default

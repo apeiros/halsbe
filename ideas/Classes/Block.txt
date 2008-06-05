@@ -1,0 +1,7 @@
+Block
+	local_variables
+		variables valid in this scope
+	bound_variables
+		variables from surrounding scope
+	bytecode
+		the bytecode of this block

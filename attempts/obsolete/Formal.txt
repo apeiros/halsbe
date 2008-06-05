@@ -1,0 +1,135 @@
+Important tokens:
+Document: a file with code
+Meta: information about the code, like encoding, author, revision
+Embedded data: binary data directly embedded into the codefile
+Expression:    An expression has a value
+Statement:     A statement causes branching (returns, conditionals, loops)
+               Statements have values too, usually the last evaluated expression's
+               value, some statements can/will modify the value.
+
+
+DEFINITION
+
+Align             := " "*
+Indent            := "\t"
+Document          := Meta MetaSeparator Code (MetaSeparator EmbeddedData)
+Meta              := Shebang? MetaTuple*
+MetaSeparator     := "+++\n"
+Code              := (Comment | Statement)*
+EmbeddedData      := [\x00-\xff]*
+
+Shebang           := "#!" [^\n]* "\n"
+MetaTuple         := MetaKey ":" " "+ MetaValue
+MetaKey           := [^:\n]+
+MetaValue         := [^\n]* ("\n\t" [^\n]*)*
+
+EmptyLine         := [ \t]* "\n"
+Comment           := DocComment | SingleLineComment | MultiLineComment | NestedComment
+DocComment        := "---\n" (([^-] | "-"[^-] | "--"[^-]) [^\n]* "\n")* "---\n"
+SingleLineComment := "//" [^\n]* "\n"
+MultiLineComment  := "/*" ([^*] | "*" [^/])* "*/"
+NestedComment     := "/-" ([^/-] | "/" [^-] | "-" [^/] | NestedComment)* "-/"
+
+Value             := Literal | Constant | Variable | Statement | Expression
+Expression        := Group | Prefix | Postfix | Infix | Ternary
+
+Group             := "(" Expression ")"
+Prefix            := [+-*@&~] Expression
+Postfix           := Expression [?]
+Infix             := Expression ([+-*/&|^~$@] | "**") Expression
+Ternary           := Expression " ? " Expression " : " Expression
+
+
+DoCompound       := DoStatement RescueStatement? OtherwiseStatement? EnsureStatement?
+
+KeywordStatement := ReturnStatement
+                 |= BreakStatement
+                 |= NextStatement
+                 |= DoStatement
+                 |= RescueStatement
+                 |= EnsureStatement
+                 |= OtherwiseStatement
+                 |= LoopStatement
+
+LoopStatement    := WhileStatement
+                 |= UntilStatement
+                 |= OnceThenWhileStatement
+                 |= OnceThenUntilStatement
+
+ReturnStatement        := "return" Suite?
+NextStatement          := ("next" | "previous" | "done") Suite?
+BreakStatement         := "break" Suite?
+DoStatement            := "do" Suite
+RescueStatement        := "rescue" (" " VECTOR) ? (" => " Variable) Suite
+OtherwiseStatement     := "otherwise " Suite
+EnsureStatement        := "ensure " Suite
+WhileStatement         := "while " Condition Suite LoopElse?
+UntilStatement         := "until " Condition Suite LoopElse?
+OnceThenWhileStatement := "once_then_while " Condition Suite LoopElse?
+OnceThenUntilStatement := "once_then_until " Condition Suite LoopElse?
+LoopElse               := "else" Suite
+ConditionalStatement   := (IfStatement | UnlessStatement) ElseStatement?
+IfStatement            := "if " Condition Suite
+UnlessStatement        := "unless " Condition Suite
+ElseStatement          := "else " (IfStatement | UnlessStatement | Suite)
+
+Suite            := "(" SimpleSuite ")" | " " SimpleSuite
+SimpleSuite      := ShortSuite | LongSuite
+ShortSuite       := "{" Statements "}"
+LongSuite        := "\n" IncreasedIndent Statements
+Statement        := 
+StatementList    := 
+Identifier       := [A-Za-z0-9_]* | "'" ("\'" | [^'])* "'" | '"' ('\"' | [^"])* '"'
+
+MethodCall       := Expression "." Identifier Arguments? Blocks
+MethodCallOnData := Expression "->" Identifier Arguments? Blocks
+
+Arguments        := ParenArgs | FreeArgs
+ParenArgs        := "(" FreeArgs ")"
+FreeArgs         := (SingleArg ("," Align SingleArg)*)?
+SingleArg        := NamedArgument | UnnamedArgument
+NamedArgument    := Identifier ":" Align Value
+UnnamedArgument  := Value
+Blocks           := (NamedBlock | UnnamedBlock)*
+
+Constant         := "$" "::"? [A-Z] [A-Za-z0-9]* ("::" [A-Z] [A-Za-z0-9]*)*
+Variable         := PseudoVariable | Local | IVar
+PseudoVariable   := "self" | "owner" | "returned"
+IVar             := "@" Identifier
+Local            := Identifier
+
+Literal          := Primary | Secondary
+Primary          := Scalar  | Vector | Collection
+SCALAR           := NUMERIC | DATETIME
+NUMERIC          := INTEGER | RATIONAL | DECIMAL | FLOAT | COMPLEX
+INTEGER          := [0-9_]+ | "0b" [01]+ | "0" [0-7] | "0x" [0-9a-fA-F]
+RATIONAL         := (INTEGER | DECIMAL | FLOAT | COMPLEX | "(" RATIONAL ")") "/" (INTEGER | DECIMAL | FLOAT | COMPLEX | "(" RATIONAL ")")
+DECIMAL          := [0-9_]* "." [0-9_]+
+FLOAT            := DECIMAL [eE] "-"? [0-9]+
+COMPLEX          := INTEGER [+-] IMAGINARY
+IMAGINARY        := [0-9_] "iIjJ"
+DATETIME         := DATE | TIME | DATE "T" TIME
+DATE             := [0-9]{4} "-" [0-9]{2} "-" [0-9]{2}
+TIME             := [0-9]{2} ":" [0-9]{2} ":" [0-9]{2} ("." [0-9]+)?
+
+VECTOR           := Expression ("," [\x20]+ Expression)+
+
+SECONDARY        := "%" [a-zA-Z]+ ("(" (ARGUMENTS) ")")? DATA
+
+Literals:
+		Stringlike
+			Binary           %o"data"
+			Base64           %b"data"
+			Hex              %h"data" // binary data hex encoded
+			Encoded/Collated %s(UTF8,UnicodeCI)"foobar" // %s(encoding,collation)
+			Regex            %r(flags){expression}
+			Symbol           :foo
+		Path      %p"/foo/bar"
+		URI       %u"http://example.com", %u"ftp://example.com"
+		Range     [a,b], ]a,b], [a,b[, ]a,b[ // [start -> incl. start, ]start -> excl. start, end] -> incl. end, end[ -> excl. end
+	
+	Vectors/Collections
+		Vector (foo, bar, baz) // in some places without ()
+		Dict   (foo: bar, baz: quuz) // in some places without ()
+		Array  @{foo, bar}, @{0: foo, 10: bar}
+		Hash   %h{foo: bar}

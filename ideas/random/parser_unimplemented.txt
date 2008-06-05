@@ -1,0 +1,6 @@
+Unimplemented things in the parser:
+* parallel assignement
+* free arguments
+* block arguments
+* single line blocks
+* jumps (return, break, raise, ...)

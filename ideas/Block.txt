@@ -1,0 +1,164 @@
+BLOCK
+
+A block is a piece of code that accepts arguments, has local variables,
+can close over another blocks' local variables.
+
+Block properties:
+	* ast:             The abstract syntax tree of this block
+	* code:            VM native code node
+	* arity:           The number of arguments this block requires
+	                    3 means the block takes/requires exactly 3 arguments
+	                    0 means the block takes/requires exactly 0 arguments
+      	             -1 means the block requires 0 but takes up to infinite arguments
+	                   -2 means the block requires 1 but takes up to infinite arguments
+	* arguments:       A dict of lists of arguments, in the form:
+	                   %d{name: (has_default, default), ...}
+	* compacts_args    whether a *args is present or not
+	* compacts_kwargs  whether a %kwargs is present or not
+	* local_variables: a list of names of literally (as oposed to eval'ed) appearing
+	                   local variables
+	* bound_variables: a list of names of literally (as oposed to eval'ed) appearing
+	                   bound variables (variables closed over)
+
+Terminology:
+	positional argument: an argument given at a position without a name.
+	                     Example: foo(1,2,3) - all arguments are passed as positional arguments
+	named argument:      an argument given with a name
+	                     Example: foo(a: 1, b: 2, c: 3)
+
+In short:
+	Valid method definitions:
+		query 'foo'
+			No arguments
+		query 'foo' |a, b, c|
+			No default values
+		query 'foo' |a, b, c: 1|
+			c has a default value
+		query 'foo' |a, b, *args|
+			args collects the rest of the passed positional arguments
+		query 'foo' |a, b, *args, c|
+			args collects the rest of the passed positional arguments
+			e.g. with foo(1,2,3) -> a: 1, b: 2, args: (), c: 3
+			with foo(1,2,3,4,5) -> a: 1, b: 2, args: (3,4), c: 5
+		query 'foo' |a, b, %kwargs|
+			kwargs collects the rest of the arguments passed by name
+		query 'foo' |a: 1, b|
+			b must be set, either by having 2 positional arguments or by setting at least
+			b via a named argument
+		query 'foo' |a: 1, *b, c|
+			c must either be set by a named argument or by calling foo with 2 or more positional
+			arguments, with more than 2 positional arguments, b becomes filled too.
+		query 'foo' |%kwargs|
+			kwargs collects the rest of the named arguments
+		
+		
+	Invalid method definitions
+		query 'foo' |*a, *b|
+			Must not have more than one *args
+		query 'foo' |%a, %b|
+			Must not have more than one %kwargs
+		query 'foo' |%a, *b|
+			%kwargs must be after *args (it must be the last argument)
+		query 'foo' |%a, b|
+			%kwargs must be the last argument
+
+
+
+Named and positional arguments
+	Method definition:
+		query 'foo' |a, b: -1, c: -2| ...
+		
+	Valid call examples
+		1. foo(1, 2, 3)          -> a: 1, b: 2, c: 3
+			All arguments positionally set. Provided value overrides the default.
+		2. foo(1, 2)             -> a: 1, b: 2, c: -2
+			Argument a and b positionally set, c uses the default value
+		2. foo(1, 2, default)    -> a: 1, b: 2, c: -2
+			The 'default' keyword explicitly instructs halsbe to use the default value for that
+			argument. Some aspects about the default keyword aren't yet resolved (as in how far it is
+			an object and can be passed on, if so what its properties are etc. and what happens if
+			you use it with an argument that doesn't define a default value)
+		3. foo(a: 1, b: 2, c: 3) -> a: 1, b: 2, c: 3
+			All arguments are set by name
+		4. foo(b: 1, c: 3, a: 2) -> a: 2, b: 1, c: 2
+			Argument order doesn't matter if they are set by name
+		5. foo(1, c: 3)           -> a: 1, b: -1, c: 3
+			Argument a is set positionally, argument c by name, and b is omitted and thus
+			uses the default value
+		6. foo(a: 1)              -> a: 1, b: -1, c: -2
+			A is set by name, all other arguments use the default values
+
+	Invalid call examples
+		1. foo
+			Argument a requires a value to be set
+		2. foo(c: 3, 1)
+			Named arguments must come after unnamed arguments
+		3. foo(1, a: 2)
+			Argument a is already set by the positional value 1
+
+
+Default values followed by no default values
+	Method definition:
+		query 'foo' |a: 1, b, c| ...
+	
+	Valid call examples
+		1. foo(1, 2, 3)    -> a: 1, b: 2, c: 3
+			All values set by positional arguments
+		2. foo(b: 2, c: 3) -> a: 0, b: 2, c: 3
+			Argument a uses the default value, the other arguments are set by name
+	
+	Invalid call examples
+		1. foo(1, 2)
+			post has no value
+
+Contractions (catch-alls)
+	*args is used to get all values
+	%kwargs is used to get all keyword arguments
+	
+	Method definition:
+		query 'foo' |a, b: 2, %kwargs|
+		
+	Valid call examples
+		1. foo(1, c: 3)          -> a: 1, b: 2, kwargs: %d{c: 3}
+		2. foo(c: 3, b: 2, a: 1) -> a: 1, b: 2, kwargs: %d{c: 3}
+	
+	Invalid call examples
+		1. foo(1, kwargs: 3)
+			You must not set the %kwargs argument by name
+
+Expansions
+	*(expression) calls to_list on the result of (expression) and expands it
+	%(expression) calls to_dict on the result of (expression) and expands it
+
+Optional arguments after catch alls
+	Arguments after a catch all must have a default value
+	they can only be reached passing a named argument
+	
+	Method definition:
+		query 'bar': |*all, special: nil| ...
+	
+	Valid call examples
+		bar(A, B, C)             -> all: [A, B, C], special: nil
+		bar(A, B, C, special: X) -> all: [A, B, C], special: X
+		
+
+
+UNUSED ALTERNATIVES
+	Named and positional arguments
+		4. foo(pre: A, B, C)             -> body: B, pre: A, post: C
+
+		5a foo(A, post: B, C)            -> body: A, pre: C, post: B
+			named is taken out of the order
+		5b foo(A, post: B, C)            -> body: A, pre: nil, post: C
+			named is not taken out of the order, last assignment wins
+		5c foo(A, post: B, C)            -> raises ArgumentAlreadyPassed
+			you cannot assign a value to an argument that already has one
+
+		6a foo(A, body: B, C)            -> body: B, pre: A,   post: C
+			named arguments take precedence
+		6b foo(A, body: B, C)            -> body: B, pre: C,   post: nil
+			arguments are assigned as they come, the last assigned wins
+		6c foo(A, body: B, C)            -> body: B, pre: nil, post: C
+			like 7b, but positions are kept
+		6c foo(A, body: B, C)            -> raises ArgumentAlreadyPassed
+			you cannot assign a value to an argument that already has one

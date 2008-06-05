@@ -1,0 +1,29 @@
+FEATURES
+
+- Contracts minimize your testing work and maximize stability and maintainability
+- Very little keywords reduce the amount to memorize
+- Explicit distinction between mutating methods and non-mutating methods (queries)
+  enables automatic parallelization
+- Named arguments
+- Primary literals for code blocks
+- Extensive list of intuitive literals (numbers, date & time, file paths, uris, ranges, symbols,
+  regular expressions, strings in various encodings, lists, arrays, hashes, ...)
+- Support for custom literals
+- Every code block supports closing over 
+- Explicit closures minimize leaking and reduce accidental changes of variables in unforeseen ways
+- Named arguments + Literal code blocks + Explicit closures = Teh Rock
+- No Inheritance (yes, this is indeed a feature, not a bug, see Namespaces, Traits and Conditionals)
+- Namespaces enable easy lexically local patching of existing classes without breaking other parts
+  of an application
+- Traits enable easy code sharing that can be activated and deactivated as wished
+- Conditionals enable easy code sharing that depends on conditions (example: a File class might
+	have a ReadableIO and a WritableIO conditional, only activating ReadableIO if it is opened for
+	read and WritableIO only if opened for write - that way methods that can't be used aren't even
+	present so you can easily test for a method availability to verify that an object can do what
+	you need it to do)
+- Implicit return value is always owner (adequate to self or this in most languages)
+- Explicit return value can be set via either using the return keyword or by setting the returns
+	pseudo local variable
+- Trivial parallel iterations using `for a,b,c in list1,list2,list3`
+- Strict styling requirements lower the effort to read foreign code (lazy mode supported - for
+  beginners and not yet convinced people)

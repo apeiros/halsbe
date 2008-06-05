@@ -1,0 +1,4 @@
+Method lookup:
+	murmur hash (1byte direct index map?)
+	trie
+	array with binary search

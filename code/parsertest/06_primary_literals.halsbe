@@ -1,0 +1,19 @@
++++
+
+$nil:           nil
+$default:       default
+$false:         false
+$true:          true
+$integer2:      0b10010110
+$integer8:      012
+$integer10:     12
+$integer10:     1
+$integer16:     0x12
+$decimal:       12.34
+$float:         12.34e56
+$rational:      12/34
+$time:          12:56
+$date:          2008-12-31
+$datetime:      2008-12-31T12:56
+$staticsymbol:  'hello world!'
+$dynamicsymbol: "Hello world!"

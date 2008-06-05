@@ -1,0 +1,20 @@
++++
+
+if $condition:
+	.a_do_stuff
+
+unless $condition:
+	.b_do_stuff
+
+if $condition:
+	.c_do_stuff
+else:
+	.d_do_other_stuff
+
+if $condition1:
+	.e_do_stuff
+else if $condition2:
+	.f_do_other_stuff
+else:
+	.g_dont_do_stuff
++++

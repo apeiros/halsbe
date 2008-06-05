@@ -1,0 +1,27 @@
+KEYWORDS
+
+self:     pseudo variable representing the current object
+owner:    pseudo variable representing the owning object
+caller:   pseudo variable representing the calling object
+old:      pseudo variable representing the object before mutating (available in postconditions)
+memory:   pseudo variable representing the memory fragment allocated for owner
+default:  method invocation (indicates to use the default set for that argument)
+nil:      logic (single instance of NilClass, representing absence of data)
+false:    logic (single instance of FalseClass)
+true:     logic (single instance of TrueClass)
+and:      logic
+or:       logic
+implies:  logic
+not:      logic
+xor:      logic
+if:       branch
+unless:   branch
+else:     branch
+while:    branch
+until:    branch
+raise:    exception handling
+rescue:   exception handling
+ensure:   exception handling
+return:   return from the method
+returns:  pseudo return variable
+returned: the value returned by a method (available in postconditions)

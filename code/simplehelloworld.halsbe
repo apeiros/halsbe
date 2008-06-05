@@ -1,0 +1,2 @@
++++
+:Application.print_line(%'Hello World!')

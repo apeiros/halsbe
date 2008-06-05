@@ -1,0 +1,10 @@
++++
+
+do
+	.some_stuff
+rescue
+	.handle_exception
+else
+	.no_exception
+ensure
+	.what_must_be_done

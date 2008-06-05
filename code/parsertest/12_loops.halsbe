@@ -1,0 +1,35 @@
++++
+
+while $condition:
+	.perform_loop
+
+until $condition:
+	.perform_loop
+
+once_while $condition:
+	.perform_loop_at_least_once
+
+once_until $condition:
+	.perform_loop_at_least_once
+
++++
+
+while $condition:
+	.perform_loop
+else
+	.do_this_if_condition_failed_at_first_loop
+
+until $condition:
+	.perform_loop
+else
+	.do_this_if_condition_met_at_first_loop
+
+once_while $condition:
+	.perform_loop_at_least_once
+else
+	.do_this_if_condition_failed_at_first_loop
+
+once_until $condition:
+	.perform_loop_at_least_once
+else
+	.do_this_if_condition_met_at_first_loop

@@ -1,0 +1,512 @@
+May 16 12:51:49 <eek>	you were asking about new literals; are you thinking of this for additions to Ruby, or for a new language/derivate?
+May 16 12:52:03 <apeiros>	for my own language
+May 16 12:52:47 <apeiros>	http://apeiros.kicks-ass.net:9951/ - it's come further already than I thought :)
+May 16 12:52:54 <eek>	OK, then I have something that I think is major - not sure what literals it would influence.  proper representation of queries; having queries be first class, instead of something added on ad-hoc
+May 16 12:53:18 <apeiros>	queries? SQL or something else?
+May 16 12:53:27 <eek>	not SQL
+May 16 12:53:37 <eek>	true relational method
+May 16 12:53:44 <apeiros>	in that case I'll wait for the explanation :)
+May 16 12:54:08 <eek>	how well do you know relational?  as in, do you know what the relational algebra is?
+May 16 12:54:36 <apeiros>	I don't know the term 'relational algebra'
+May 16 12:54:44 <eek>	ok
+May 16 12:54:45 <apeiros>	might be that I know what it is, though
+May 16 12:55:11 <eek>	it's one of the possible formalisms for the relational model, which SQL is *not* an implementation of
+May 16 12:55:22 <eek>	SQL is sort of an approximation
+May 16 12:55:41 <eek>	making everything WAY more complicated to deal with, because stuff isn't orthogonal
+May 16 12:56:19 <eek>	in the relational algebra, you represent all queries through 7 or 8 operators (depends a bit on what definition you use; I believe 7 is sufficient, possibly even 6)
+May 16 12:56:54 <eek>	this can represent all types of data relations, and all type of extractions.  with some extensions, it's possible to deal nicely with hierarchical structures, too
+May 16 12:57:41 <eek>	having this be handled as a first class part of the language let you use this everywhere, and should let deal with data from different sources in a normalized fashion
+May 16 12:57:53 <eek>	I have a dummy implementation of some this in Ruby available
+May 16 12:58:03 <eek>	http://people.freebsd.org/~eivind/ruby/relation/ IIRC
+May 16 12:59:04 <apeiros>	what are those 6-8 operators?
+May 16 13:00:17 <apeiros>	I have to admit I can't easily follow the code you linked to
+May 16 13:00:30 <eek>	each of these form a new relation:
+May 16 13:00:43 <eek>	project - pick out some columns from a relation
+May 16 13:00:51 <eek>	select - pick out some rows from a relation
+May 16 13:01:17 <eek>	difference - like subtract, remove one relation from another
+May 16 13:01:55 <eek>	union - add two relations to each other, removing equal rows (relations are sets)
+May 16 13:02:33 <eek>	join/natural join - join up two relations, combinatorily
+May 16 13:02:36 <eek>	rename - change name of a column
+May 16 13:03:28 <eek>	SQL mix up select, project, and rename, and don't do difference or union properly at all (using subselects instead)
+May 16 13:04:09 <apeiros>	so queries deal with tabular data only, do I understand that correctly?
+May 16 13:04:39 <eek>	yeah - but you can represent a hierarchy as a relation easily enough
+May 16 13:05:02 <apeiros>	why should it go into syntax as opposed to classes, modules & methods?
+May 16 13:05:48 <eek>	it may be enough to put it in a core datatype library that everything use
+May 16 13:06:31 <eek>	the primary thing is that I believe you'll get a lot of benefit from this fitting naturally with the language and being used everywhere
+May 16 13:07:00 <apeiros>	I'll for sure save this dialog and store it in the idea parts of it :)
+May 16 13:07:42 <apeiros>	problem is: I obviously don't know sufficiently about this topic :-/
+May 16 13:08:21 <apeiros>	I'd welcome anybody who'd help me work on halsbe (my language) though, so if you feel like it :)
+May 16 13:08:39 <eek>	I am definately interested
+May 16 13:08:59 <eek>	I've been thinking about starting up a language project, but I would much rather collaborate
+May 16 13:09:11 <eek>	goals: light weight to work with
+May 16 13:09:16 <apeiros>	you'd have to accept a few facts, though, the most annoying at the moment probably the language being a moving target as it's still in its infancy and things can (and will) change.
+May 16 13:09:39 <eek>	and with STRONG library support, which means that there needs to be a good culture around libraries for it
+May 16 13:09:42 <apeiros>	and the other: it's my baby, and I can be a bitch about it if I want or don't want something :)
+May 16 13:09:43 <eek>	that is fine
+May 16 13:10:20 <eek>	ref baby, we'd have to find out whether our visions is compatible enough that this would be a good collaboration
+May 16 13:10:40 <apeiros>	well, all I have about the language is available on the url I gave you. I registered on github yesterday and will commit it sometime during the next week
+May 16 13:10:51 <apeiros>	sure
+May 16 13:11:09 <eek>	my primary interests is really about the culture/library building around it, where I'd like the language to support writing solid libraries
+May 16 13:11:30 <apeiros>	I'd suggest to first view the code/parsertest/ files, that'll give you a little idea of how the language looks
+May 16 13:11:34 <eek>	this include making it easy to do really light weight documentation
+May 16 13:11:43 <apeiros>	agreed
+May 16 13:11:56 <apeiros>	this is why I have special markup for doc comments
+May 16 13:12:00 <eek>	right
+May 16 13:12:06 <apeiros>	the parser keeps doc comments in the parsetree
+May 16 13:12:29 <eek>	I have an idea around that, BTW: prod code should be possible to mark as examples for library functions
+May 16 13:12:36 <apeiros>	also I'm still looking around for good textual markup, at the moment my favorite is rst
+May 16 13:12:56 <eek>	let me throw in a very important aspect of my vision: a big, big shared version control space for libraries
+May 16 13:13:11 <eek>	where people can work across different libraries on what they are experts on
+May 16 13:13:22 <apeiros>	mhm, but not as a requirement
+May 16 13:13:28 <eek>	so there is a community around maintaining "all" libraries
+May 16 13:13:35 <apeiros>	agreed
+May 16 13:13:46 <apeiros>	my idea is a 3 tier level for libraries:
+May 16 13:14:03 <apeiros>	core: the language requires those to run, it's the minimal set for the language to function
+May 16 13:14:21 <apeiros>	standard: a normal installation comes with those
+May 16 13:15:00 <apeiros>	recommended: not installed per default, but those pass the requirements (fully documented, fully specified)
+May 16 13:15:31 <eek>	sounds reasonable, and orthogonal to much of what I'm thinking about
+May 16 13:15:41 <apeiros>	as aiding infrastrucutre something like rubyforge, BUT with doc-& spec-coverage scores, also with userrating.
+May 16 13:16:06 <apeiros>	your idea of a big shared version control space should go along that easily if I understand it correctly
+May 16 13:16:18 <eek>	yes
+May 16 13:16:20 <eek>	brb, real life
+May 16 13:16:32 <apeiros>	the rubyforge like aiding infrastructure would provide an open git/svn/whatever repository for core/standard libs.
+May 16 13:16:51 <apeiros>	and optionally for every other lib if the author of it pleases so
+May 16 13:35:13 <eek>	sounds similar to what I was thinking of
+May 16 13:35:42 <eek>	and having "central committers" get write access all over the place, including whatever people upload
+May 16 13:36:02 <eek>	have you seen the stuff we worked on with RPA?
+May 16 13:37:03 <apeiros>	RPA is the name for what you linked to?
+May 16 13:37:15 <eek>	no, RPA was a competitor to RubyGems
+May 16 13:37:35 <apeiros>	ah n o
+May 16 13:37:42 <apeiros>	entirely unfamiliar with rpa then
+May 16 13:39:22 <eek>	anyway, when you're not familiar with it, I can't just say "I'd like to do things similar to what we were working towards then"
+May 16 13:39:59 <eek>	I'd like to make the distance between using a package and contributing to the packaged library as small as possible
+May 16 13:40:19 <apeiros>	that shouldn't be too difficult
+May 16 13:40:50 <eek>	so that when you have a package installed, you can get to working on the source with just something like the command "rpa hacksource", and you get a checked out version control tree, standard layout, standard style, standard documentation location, etc
+May 16 13:40:54 <apeiros>	the main problem there is probably that people prefer different scms
+May 16 13:41:06 <eek>	yeah
+May 16 13:41:22 <eek>	to make it work well, I think it might be necessary to gate that somehow for the official stuff
+May 16 13:41:43 <eek>	I seem to remember bazaar does quite a bit of the work around that
+May 16 13:41:45 <apeiros>	well, I think you can make the distance even smaller
+May 16 13:41:55 <apeiros>	by not requiring a command like rpa hacksource
+May 16 13:42:12 <apeiros>	just modify the source, then: rpa diff packagename
+May 16 13:42:20 <apeiros>	or: rpa supplypatch packagename
+May 16 13:43:09 <apeiros>	since patches only work on a single revision that should be orthogonal to version management systems
+May 16 13:44:02 <eek>	to be able to just modify the source, you'd have to have a checked out version on all boxes, in addition to the installed version, I think?
+May 16 13:44:20 <apeiros>	why?
+May 16 13:44:26 <eek>	though maybe you could just tie them together...
+May 16 13:44:40 <apeiros>	if you install a package you got its code
+May 16 13:44:42 <eek>	I know I at least find it necessary to work on a different tree than I have installed
+May 16 13:44:51 <apeiros>	why should anything stop you from modifying that code?
+May 16 13:45:08 <apeiros>	ok, for that one could make a separate require directory
+May 16 13:45:12 <eek>	what stops me is that that code is running, and I want to be able to test before I install something else
+May 16 13:45:25 <eek>	but that could definately be optional
+May 16 13:45:43 <apeiros>	so you could have something like: rpa prepareforhacking packagename - which just copies it over to the other directory so you still have an unmodified version
+May 16 13:45:52 <eek>	yup
+May 16 13:46:25 <eek>	and I like the idea of being able to mod the installed version - I often find it convenient to do that while debugging, too, and being able to work with the changes there in a sane way would be a help
+May 16 13:47:33 <apeiros>	did you take a look at the language itself?
+May 16 13:47:56 <eek>	the basic thought I have around this is that changes should flow as freely as possible, with very few hurdles for people to contribute a little bit where they can, thus roping in more and more developers and getting a high quality library base
+May 16 13:48:02 <eek>	not yet :)
+May 16 13:48:10 <eek>	had a coworker hanging over my shoulder, will check now
+May 16 13:48:14 <apeiros>	np
+May 16 13:48:26 <apeiros>	agreed
+May 16 13:48:38 <apeiros>	lessen the burden to get involved is a huge bonus
+May 16 13:48:57 <apeiros>	also having high quality libs in the core sets the standard for how new libraries will look like
+May 16 13:49:05 <apeiros>	I think that effect is by far underestimated
+May 16 13:50:06 <apeiros>	the parser currently parses everything in the parsertest directory, but it's far from being complete. free arguments e.g. are missing, code literals are also missing.
+May 16 13:50:28 <eek>	what's the $ in primary_literals ?
+May 16 13:50:33 <apeiros>	local variables
+May 16 13:50:41 <apeiros>	$foo is a local variable
+May 16 13:51:08 <eek>	ok
+May 16 13:51:38 <apeiros>	I'd prefer no prefixing, but it proved to be (for me) impossible to find a solution for all my requirements without :-/
+May 16 13:51:48 <eek>	ah, right
+May 16 13:51:58 <eek>	what's the difference between a dict and hash?
+May 16 13:52:03 <apeiros>	order
+May 16 13:52:16 <apeiros>	and in consequence: size :)
+May 16 13:52:25 <eek>	right
+May 16 13:52:29 <apeiros>	(retaining order requires about 3x more memory)
+May 16 13:52:29 <eek>	relations are unordered, BTW
+May 16 13:52:36 <apeiros>	since they are sets ;-)
+May 16 13:52:47 <eek>	yup
+May 16 13:53:04 <apeiros>	oh, I should add a set literal... too sad %s is already taken by string... hm
+May 16 13:53:12 <apeiros>	any good single char to notion 'set'?
+May 16 13:53:25 <eek>	there is another option instead of relations that might be as good or better: extended set theory (XST).  unfortunately, I almost only know the name of that
+May 16 13:53:50 <apeiros>	I think raggi knows a good deal about sets too
+May 16 13:54:23 <eek>	I know (by reliable people claiming it) it's possible to use to build up things that cover relational theory and can also set up everything so you actually represent the on-disk structure of a database in the same way everything is represented up to the top level, keeping formal and simple transformations on each level
+May 16 13:55:23 <eek>	ah, I see instance variables.  one thing I've been thinking about which might be necessary to build a really solid module system: declaring instance variables before use.  (This also creates a place to put documentation for said variables)
+May 16 13:56:09 <eek>	I am not totally sure that's something that would be needed, it is an idea I have been playing with
+May 16 13:56:12 <apeiros>	I have something different, maybe better: initializers for instance variables
+May 16 13:56:32 <eek>	what do you mean by that?
+May 16 13:57:09 <apeiros>	e.g. intialize_ivar 'foo': { :Time.now }
+May 16 13:57:33 <apeiros>	instead of autovivifying ivars to nil, they autovivify to whatever the initializer returns
+May 16 13:58:09 <eek>	I'll have to think about that
+May 16 13:58:23 <apeiros>	but actually you brought up a point I should think about too...
+May 16 13:58:32 <eek>	what I was thinking ref declaring was that this could make it easier to deal with namespacing of variables
+May 16 13:58:37 <apeiros>	I dropped inheritance in favor of modules
+May 16 13:58:46 <apeiros>	so I should have a strong model to avoid nameclashes
+May 16 13:59:58 <eek>	this is covered somewhat in Pierce's "Advanced Topics in Type Systems"
+May 16 14:00:11 <eek>	though I haven't gotten around to reading that yet
+May 16 14:00:56 <eek>	Types and Programming Languages, actually
+May 16 14:02:24 <eek>	there's a 100 page section covering "Design Consideration for ML-Style Module Systems" and "Type Definitions"
+May 16 14:02:57 <eek>	might not be as relevant in this context as I remembered
+May 16 14:03:03 <apeiros>	drats, my wishlist is already full with books :)
+May 16 14:10:22 <apeiros>	one problem with the parser advancing so fast (I made it parse tests 04-13 the last two days) is that I now have to start thinking about some hard problems like how the object model looks in detail, *sob* :)
+May 16 14:10:44 <eek>	*grin*
+May 16 14:11:09 <eek>	BTW, have you thought about the area of tests / invariants / proofs?
+May 16 14:11:20 <eek>	and - dare I say it - types?
+May 16 14:12:10 <apeiros>	by the log of webrick I see you haven't looked at the corelib yet :)
+May 16 14:12:12 <apeiros>	moment
+May 16 14:12:38 <apeiros>	http://apeiros.kicks-ass.net:9951/implementation/core/list.halsbe
+May 16 14:12:57 <apeiros>	if you know eiffel, then I should tell you that I stole some things from it :D
+May 16 14:13:05 <apeiros>	I'm a huge fan of DBC
+May 16 14:13:49 <eek>	I know Eiffel only from reading about it, not from programming it; it's been an inspiration to me too for over a decade
+May 16 14:14:01 <eek>	actually, thinking about it, over 15 years.  how time flies
+May 16 14:14:13 <apeiros>	eiffel is already that old? OO
+May 16 14:14:50 <eek>	OOSC was released in 1989, wasn't it?  I remember using invariant thoughts I'd borrowed from Eiffel in late 1993 or early 1994, at least
+May 16 14:15:01 <eek>	and Eiffel wasn't really new then
+May 16 14:15:07 <apeiros>	I just noticed that I should update the specifications... .is has become object equality...
+May 16 14:15:42 <apeiros>	hm, interesting, well, I probably was surprised because I never really thought about how old eiffel might be
+May 16 14:15:43 <eek>	Eiffel the language is from 1985 (according to Wikipedia)
+May 16 14:16:28 <apeiros>	anyway, the main influences of halsbe are ruby, eiffel and python. there probably are others.
+May 16 14:17:03 <eek>	there always are :)
+May 16 14:17:29 <apeiros>	one thing I think I do far better than ruby: I have a code literal :)
+May 16 14:17:35 <apeiros>	saves one a lot of pain
+May 16 14:17:56 <apeiros>	I mean just see the current discussion about ->() {} on ruby-core ML :)
+May 16 14:23:31 <eek>	I'm not on ruby-core at the moment
+May 16 14:24:20 <apeiros>	gah, I hate keyboard disconnects
+May 16 14:24:22 <eek>	apropros better than Ruby, have you seen to stuff in Scala for creating accessors and instance variables from initializer parameters?
+May 16 14:24:38 <apeiros>	just use http://www.ruby-forum.com/ :)
+May 16 14:24:53 <apeiros>	ah, scala - that's on my list to look at too
+May 16 14:25:01 <apeiros>	I heard it also has a nice actor model
+May 16 14:25:33 <eek>	well, people seems to like it - I haven't looked carefully, I've just noticed a little tendency to overhype it
+May 16 14:26:32 <apeiros>	overhyping is quite common I think ;-)
+May 16 14:26:37 <eek>	saying that it's "similar in lightness" to what Erlang does, while it was actually as far as I understood about 50x higher in memory consumption and schedule time
+May 16 14:26:59 <eek>	and, in my book, anything over 10x difference will generally put you in a different game.
+May 16 14:27:56 <eek>	I really like the specification stuff I see in List, BTW
+May 16 14:30:24 <eek>	are you planning to support "before" (or "old" or whatever it was called) in postconditions?
+May 16 14:30:36 <apeiros>	yes. I already use it.
+May 16 14:30:40 <apeiros>	it's IMO a necessity.
+May 16 14:30:49 <apeiros>	but also a PITA to think about how to implement it.
+May 16 14:30:50 <eek>	it makes things a lot, lot easier at least
+May 16 14:30:55 <eek>	BTW: Have you noticed Coq?
+May 16 14:31:03 <apeiros>	Coq? no, what is that?
+May 16 14:31:11 <eek>	Coq is a proof assistant
+May 16 14:31:22 <eek>	it is a program / programming language for helping people prove mathematical stuff
+May 16 14:31:57 <apeiros>	hm
+May 16 14:31:58 <eek>	the reason I ask is that one thing I've been mentally toying with lately is using that alongside my language - taking postconditions and other claims, and outputting them in some form where somebody could use Coq to construct a proof
+May 16 14:32:12 <eek>	no need to check the postcondition if it is proved true...
+May 16 14:32:18 <apeiros>	I think it'd be a good thing to have you on board :)
+May 16 14:32:36 <eek>	thanks :)
+May 16 14:32:59 <eek>	as far as I can tell, this project matches well with the goals I have
+May 16 14:33:16 <eek>	the only thing is that I don't really like the $ in local variables, but then again, it seems neither of us does
+May 16 14:37:22 <eek>	back a bit on topic: what's your thoughts on types around this?
+May 16 14:38:03 <apeiros>	I prefer rubys way, strong dynamic typing
+May 16 14:38:33 <eek>	ok
+May 16 14:39:33 <eek>	that's basically OK with me - what I really prefer is "getting as much warnings as early as possible, in some way where this doesn't get in the way at all".  I've just started learning Haskell in order to see how that fares in that department
+May 16 14:39:40 <apeiros>	regarding the $: I'd love to remove as much noise as I can. but alas, some functionality requires some sacrifices. it's always a trade... :-/
+May 16 14:40:09 <apeiros>	well, I fully agree with 'as much warnings as early as possible'
+May 16 14:40:18 <apeiros>	I use the preconditions for that
+May 16 14:40:27 <apeiros>	also I'm pondering to introduce an interface model
+May 16 14:41:15 <apeiros>	much like javas interfaces. you can then specify that an argument must conform to one or many interfaces.
+May 16 14:41:24 <apeiros>	it would internally simply be translated into preconditions of course.
+May 16 14:42:21 <apeiros>	btw., another important point of my approach is that I go rubinius' way
+May 16 14:42:31 <apeiros>	as much as possible of the language implemented in the language itself
+May 16 14:45:14 <eek>	interfaces has some good and bad sides.  it's a pity I've lost the paper I had written about "adding more typing to Ruby" (a laptop was stolen) - maybe I can get back a copy from dblack
+May 16 14:45:25 <eek>	WRT implementing in itself, I agree.
+May 16 14:48:30 <eek>	do you know the difference between structural and nominative type system, BTW?
+May 16 14:48:53 <apeiros>	nope
+May 16 14:49:00 <apeiros>	I know very little theory anyway :)
+May 16 14:49:58 <eek>	in a structural type system, two types with the same methods and same types of variables/variable names is compatible (like duck typing).  in a nominative system (like with interfaces), they're different
+May 16 14:51:09 <eek>	I've been thinking back and forth on how to deal with this for my language; structural gives a lot of benefits (code "just clicks together"), while interfaces allow us to make sure we're talking about the same thing.
+May 16 14:51:58 <eek>	let me call interfaces protocols for the time being; there's some subtle differences, and I want to make sure we keep interfaces as meaning about the same thing as in Java
+May 16 14:52:29 <apeiros>	ok, I'll clarify what I want to do:
+May 16 14:53:10 <apeiros>	a template for what methods are required with how many arguments at least and those arguments again with what interface/protocol, same for return value
+May 16 14:53:27 <eek>	right
+May 16 14:53:29 <apeiros>	nil/default is considered 'every type' in that system
+May 16 14:53:35 <eek>	do you want to check this at runtime?
+May 16 14:54:00 <apeiros>	for the moment yes. if somebody comes along and shows me that I can do that better I'm all open :)
+May 16 14:54:32 <eek>	I (a) think it's possible to do better without getting in the way much, (b) think it's not possible to do at runtime in a feasible way
+May 16 14:54:53 <eek>	because it'll be slow as molasses to do at runtime.  (I've been thinking about doing the same thing, you see...)
+May 16 14:56:03 <apeiros>	@ slow as molasses: that's why you can switch off contracts
+May 16 14:56:06 <eek>	when I say "much", I mean that in theory, it is possible to write programs that are correct yet will give type errors - it just doesn't happen in practice
+May 16 14:56:53 <eek>	example of a program that most static type checkers will refuse even thought it is valid:   something_that_must_calculate_with_numbers(false ? "i am a string and strings will fail" : 14)
+May 16 14:57:52 <apeiros>	I see
+May 16 14:58:02 <apeiros>	btw. at the slow as molasses: I do have ideas on how to reduce the load
+May 16 14:58:16 <apeiros>	though it will always be a slowdown, no matter how much I speed it up.
+May 16 14:58:31 <eek>	except if that is through full inference/proofs of the property, of course
+May 16 15:00:46 <eek>	anyway, I'm not sure if static types is the way to go - I just think they should be carefully considered to see what is possible and not with them
+May 16 15:01:42 <eek>	I'd like to throw in two extra things to think about:
+May 16 15:01:53 <eek>	units, as in km/h or x or y or width or height
+May 16 15:02:38 <apeiros>	http://apeiros.kicks-ass.net:9951/ideas/Literals.txt ;-)
+May 16 15:03:24 <eek>	and the idea of forcing people to declare if a method is going to throw an exception, so it is possible to read code and see what lines in a method may throw an exception.  (this is NOT like Java, because I am not thinking of the method signature per se - I am thinking of the point of call)
+May 16 15:03:43 <eek>	I am not sure if it is a good idea, I am just sure it solves some problems I have seen with exceptions
+May 16 15:04:33 <apeiros>	aaaah, now I remember what intercept was good for!
+May 16 15:04:36 <apeiros>	hah, thanks :D
+May 16 15:04:49 <eek>	... ?
+May 16 15:05:13 <apeiros>	I have an additional block in begin/rescue/else/ensure/end
+May 16 15:05:18 <apeiros>	intercept
+May 16 15:05:57 <apeiros>	it's used to e.g. a number of exceptions and "simplify" it to a single exception type
+May 16 15:06:12 <eek>	right
+May 16 15:07:08 <eek>	BTW, talking of that - I've started collecting examples of code that end up icky when I program them at the moment, to try to find new control structures to make this simple and clean.  how's your feeling on adding more control structures?
+May 16 15:08:12 <apeiros>	I try to keep as much as possible out of syntax. so far I have only 4 control structures (do, if, while, case)
+May 16 15:09:02 <apeiros>	but I'm open, might well be that there's something of use. also there's always the possibility to do it via methods
+May 16 15:09:51 <eek>	yeah
+May 16 15:10:26 <eek>	I'll look over the code and see what I come up with - it's mainly a case of wanting to be able to write clean code for all cases
+May 16 15:10:42 <apeiros>	I share that feeling :)
+May 16 15:10:48 <eek>	:)
+May 16 15:10:59 <apeiros>	but I think most such cases can be dealt with methods
+May 16 15:11:19 <eek>	there's always the possiblitity of adding macro capabilities, but I tend to feel that's a bit like giving a kid a power chainsaw to cut bread...
+May 16 15:11:49 <apeiros>	macro? as in macros in C?
+May 16 15:12:05 <eek>	preferably as in hygenic macros in Lisp or Scheme
+May 16 15:12:23 <eek>	did you know many Lisps do not have "if" as a core language construct?
+May 16 15:12:32 <eek>	it's implemented in the standard library
+May 16 15:15:02 <apeiros>	how do you implement if without if?
+May 16 15:15:53 <eek>	using a form of case/when
+May 16 15:16:06 <apeiros>	aha! cheaters :)
+May 16 15:16:20 <apeiros>	I'd have done it the otherway round
+May 16 15:16:23 <eek>	some other lisps have case/when implemented using if
+May 16 15:16:25 <apeiros>	implement case/when in terms of if
+May 16 15:16:42 <eek>	others have both implemented using soemthing like method_missing, I think
+May 16 15:16:47 <apeiros>	but anyway, I think I keep those constructs in syntax for performance and optimization reasons
+May 16 15:17:44 <eek>	actually, I think an even better reason is program consistency.  lisps optimize the heck out of this - in C++'s heyday, Common Lisp code tended to run faster than C++ code.  
+May 16 15:19:31 <eek>	just to give the background: that happened because CL code was higher level code, so CL compilers could do more analysis of the code - and it had a smaller number of constructs to deal with, through compiling everything through a macro processor to a smll number of constructs
+May 16 15:22:09 <eek>	I just sent you a mail from "Charlie Root" containing a couple of examples of code (in Perl) where I found present control structures slightly annoying.  the last one could probably be somewhat reasonbly done through a list.collect { |field| ... }.reject { |val| val }.each { |aditem_id| ... }
+May 16 15:23:56 <apeiros>	oh, about transactional: I'm pondering introducing a correspondent to do/intercept/rescue/else/ensure
+May 16 15:24:21 <apeiros>	would be: transaction/intercept/rescue/rollback/commit/ensure
+May 16 15:24:32 <eek>	right
+May 16 15:24:57 <apeiros>	since I have to implement some state preserving mechanism for old anyway that could be done in the same manner
+May 16 15:26:33 <eek>	so, something like STM for that?  it could be quite interesting...
+May 16 15:27:07 <apeiros>	stm?
+May 16 15:27:18 <eek>	Software Transactional Memory
+May 16 15:29:24 <apeiros>	ah
+May 16 15:29:44 <apeiros>	tbh I have no idea yet how to do old/transactions
+May 16 15:29:56 <apeiros>	for transactions I need to read up a lot as I only know the basic concept
+May 16 15:30:14 <eek>	search for "software transactional memory" - it's about this
+May 16 15:30:24 <eek>	I believe it is somewhat tricky to implement, though
+May 16 15:30:45 <apeiros>	my current thoughts revolve around a very low level implementation of copy on write to speed up things
+May 16 15:31:42 <eek>	I suspect the entire concept will harsh without compile time support, I'm not sure though - maybe there's some way I don't know to make it easy
+May 16 15:32:32 <apeiros>	well, good thing is that I don't care about performance at the moment
+May 16 15:32:40 *	eek suddenly hates his coworker for a bit
+May 16 15:32:46 <apeiros>	?
+May 16 15:33:31 <eek>	he's been messing about with implementing some stuff
+May 16 15:33:49 <eek>	and (a) he's spent a week instead of the required 1.5 to 2 hours
+May 16 15:34:05 <eek>	(b) he's actually managed to make me have to spend way more than two hours cleaning up after him
+May 16 15:34:17 <apeiros>	uuh
+May 16 15:34:41 <eek>	(c) he's supposed to take over my job, and I would find it easier to teach him how to do that if he would actually do what I told him instead of insisting on trying to follow his old habits that don't fit this environment
+May 16 15:36:21 <eek>	(I'm quitting this job and starting to work for Google in september)
+May 16 15:38:17 <apeiros>	oh, nice
+May 16 15:42:44 <eek>	what's the difference between -> and . in method_chain?
+May 16 15:43:06 <apeiros>	-> will shortcut if the receiver is nil
+May 16 15:43:17 <eek>	ah.
+May 16 15:43:22 <apeiros>	nil->anymethod always evaluates as nil
+May 16 15:43:39 <apeiros>	and shortcut as in: it won't call any subsequent call in the chain
+May 16 15:43:50 <eek>	makes sense
+May 16 15:43:55 <apeiros>	(does not include symbolic methods, e.g. nil->foo + 3 --> nil + 3)
+May 16 15:44:09 <apeiros>	it's one thing I really miss in ruby
+May 16 15:44:18 <eek>	yeah, I've missed that too
+May 16 15:44:43 <apeiros>	seems nobu (iirc) proposed it about 2y ago, but matz didn't even react to it :(
+May 16 15:46:04 <eek>	pity.
+May 16 15:46:34 <eek>	with regards to that: do you have any thoughts on - after the ball is rolling - relinguishing/delegating part of control?
+May 16 15:47:02 <apeiros>	no, that's too far in the future :)
+May 16 15:48:24 <apeiros>	I mean my current schedule is to get a working VM + minimal core until 2117 ;-)
+May 16 15:48:28 <eek>	for me, I felt it was important to think about early, so I didn't wind myself into too many thoughts of me continuing to "own" the project, as I've seen too many open source projects - maybe most - get large problems around these transitions
+May 16 15:48:32 <eek>	*grin*
+May 16 15:49:08 <apeiros>	I think I'll want to be a benevolent tyrant
+May 16 15:49:15 <apeiros>	as in: I have the ultimate say
+May 16 15:49:36 <apeiros>	but that only concerns the core
+May 16 15:49:50 <apeiros>	what I was largely disappointed with was the failure of the RCRs
+May 16 15:49:54 <apeiros>	I hope to do better on that
+May 16 15:50:08 <apeiros>	having the whole core specced also should help with that as you can avoid regressions
+May 16 15:50:15 <eek>	I was thinking of one evil hack for my own language (my plan was to start implementation in a few months to a year - still in the research phase) - compiling to another language to start off.  with the stuff I was thinking of towards the "end" (I've been thinking for a while), compiling to Erlang seemed a distinct possiblity
+May 16 15:50:34 <eek>	the problem is that being a benevolent dictator is a LOT of work, and people tend to move on
+May 16 15:51:14 <apeiros>	that entirely depends on how you deal with being the tyrant
+May 16 15:51:17 <eek>	I've seen it in many of the projects I've been party to - after 10-15 years, it tend to become too much work and people fall off
+May 16 15:51:31 <eek>	sometimes shorter
+May 16 15:51:33 <apeiros>	it just means that you say "ok" to changes
+May 16 15:51:44 <eek>	yeah
+May 16 15:51:56 <apeiros>	failures can come from the try to review all suggested changes
+May 16 15:52:03 <apeiros>	but that can be delegated to trusted people
+May 16 15:52:14 <eek>	the point is that you need to delegate somewhat more than that, too - saying that somebody else can review and say "this looks OK" and you generally give the get-go from that
+May 16 15:52:18 <eek>	right
+May 16 15:52:19 <apeiros>	also peer review schemes might work great to delegate that
+May 16 15:52:56 <eek>	I agree with that - I just think the situation should be dealt with, including  the possibility of "what does the community do if <benevolent dictator> dies?"
+May 16 15:53:18 <apeiros>	I'd generalize that to: is inactive
+May 16 15:53:23 <eek>	yeah
+May 16 15:53:33 <apeiros>	that may include dead, being absorbed by family&job, ...
+May 16 15:53:41 <apeiros>	in the worst case you can always fork
+May 16 15:53:44 <eek>	then he *could* step in again, but it would be good to have some fallback for that
+May 16 15:53:51 <eek>	of course - that sucks, though
+May 16 15:54:39 <apeiros>	I want to release all under free licenses. basically all I want is: bugfixes must be sent in, name must not be used with incompatible systems, no guarantees
+May 16 15:54:54 <eek>	right
+May 16 15:55:23 <apeiros>	for everything else I don't think I really care. if people find a way to make money with it - good :)
+May 16 15:55:31 <eek>	I think one thing would be nice: the ability to have somebody able to re-license, but only in some reasonably decent way
+May 16 15:55:43 <apeiros>	I don't want to rulify relicensing
+May 16 15:55:45 <eek>	sounds like what I was thinking :)
+May 16 15:56:01 <apeiros>	that should be rare enough that it can be dealt with per case
+May 16 15:56:19 <apeiros>	good old fashioned dealing :)
+May 16 15:56:37 <eek>	oh, I was thinking of HAVING the ability to relicense.  if you don't hold copyright to everything or in some other way is authorized to, you cannot relicense
+May 16 15:56:42 <eek>	in practice
+May 16 15:57:05 <apeiros>	ah
+May 16 15:57:11 <eek>	like, if you have 5000 contributors, 20% with changed e-mail addresses, 5% dead, ...
+May 16 15:57:17 <apeiros>	you mean that contributors have to accept that I hold the copyright?
+May 16 15:57:21 <apeiros>	or something along that way?
+May 16 15:57:28 <eek>	something like that
+May 16 15:57:34 <apeiros>	ah, interesting thought
+May 16 15:57:51 <eek>	that was why I was thinking of some rules around it - because without it, people would feel you just took the rights
+May 16 15:57:56 <apeiros>	btw., might be that I work for google too
+May 16 15:58:09 <apeiros>	I was asked by a google employer to translate my resume and send it in :)
+May 16 15:58:19 <eek>	ah, cool
+May 16 15:58:23 <eek>	where ?
+May 16 15:58:26 <apeiros>	yes, I agree, I didn't think about that
+May 16 15:58:31 <apeiros>	in zurich, switzerland
+May 16 15:58:38 *	[eek] (n=eivind@217.77.37.81): Eivind Eklund
+May 16 15:58:38 *	[eek] #rpa #scala #ruby-lang #openx 
+May 16 15:58:38 *	[eek] irc.freenode.net :http://freenode.net/
+May 16 15:58:38 *	[eek] is identified to services 
+May 16 15:58:38 *	[eek] End of WHOIS list.
+May 16 15:58:39 <eek>	ah.  I chose Dublin over Zurich
+May 16 15:58:52 <apeiros>	ah, so you're in europe too then?
+May 16 15:58:58 <eek>	yeah, Norway
+May 16 15:59:08 <apeiros>	oh, nice country
+May 16 15:59:13 <apeiros>	been there when I was 12 or so
+May 16 15:59:13 <eek>	:)
+May 16 15:59:25 <apeiros>	though I think it's even rainier than CH :-p
+May 16 15:59:33 <apeiros>	(maybe we just hit bad days)
+May 16 16:00:04 <apeiros>	well, I don't know yet whether I will be accepted by google nor whether I'd take the job if I was
+May 16 16:00:13 <apeiros>	but it certainly would be cool :)
+May 16 16:00:30 <eek>	there's a lot tests before they accept you - and it seems very nice when you start :)
+May 16 16:01:03 <eek>	if you have time, go through the interviews etc at least, no matter if you want to start or not - it's fun :)
+May 16 16:01:24 <apeiros>	hehe
+May 16 16:01:46 <apeiros>	ah, I completly forgot to look at your perl code
+May 16 16:01:56 <apeiros>	the transactional distraction :)
+May 16 16:02:31 <apeiros>	been a long time since I last did perl... might be as much as 8 years, yikes... :-S
+May 16 16:03:07 <eek>	the structure isn't very much perl related, it's just related to normal control structures
+May 16 16:03:16 <eek>	I picked out stuff I felt bad about while I wrote it
+May 16 16:04:07 <apeiros>	well, having named arguments and code literals should make it possible to deal with that
+May 16 16:05:18 <apeiros>	e.g.: @argv.each 'preprocess': { |foo| process }, 'select': { |foo| pick the ones you want to have in each }. 'do': { ... }
+May 16 16:05:43 <eek>	the first part was that I ended up having really two interlinked phases to the code: one part that verifies that the data is OK - while doing parsing - and another part that should really only run if everything parsed OK.  it's sort of doable as a transaction at the code level, except it hit the file system.
+May 16 16:06:21 <eek>	so each will take several named code blocks?
+May 16 16:06:36 <apeiros>	it can
+May 16 16:06:44 <apeiros>	every method can
+May 16 16:06:58 <apeiros>	since blocks are just really code literals
+May 16 16:07:18 <apeiros>	(in halsbe that is)
+May 16 16:07:24 <eek>	the problem was also carrying over variables from the preprocessing part to the execution part
+May 16 16:07:43 <apeiros>	hm, ok, that is a problem, could use the method's self for that
+May 16 16:07:55 <apeiros>	at the moment I use 'owner' for what is 'self' in ruby
+May 16 16:08:06 <apeiros>	while 'self' is the method
+May 16 16:08:07 <eek>	ah
+May 16 16:08:39 <apeiros>	but those are things I only thought about very shallowly
+May 16 16:08:56 <eek>	hmm, that sounds clean and I'm not sure if it will be 100% useful in practice
+May 16 16:09:20 <eek>	because you want to be able to call other methods in the object from the code block
+May 16 16:09:28 <apeiros>	well, so far the only real usecase for self I saw is for recursion
+May 16 16:09:29 <eek>	and doing owner. seems like it would make your code hairy
+May 16 16:09:50 <apeiros>	not really, .foo implicitly calls owner.foo
+May 16 16:10:08 <eek>	is that consistent with what .foo does everywhere else?
+May 16 16:10:15 <apeiros>	yes
+May 16 16:10:26 <eek>	being able to recurse in an anonymous code block is awesome
+May 16 16:10:39 <eek>	doesn't it call self.foo everywhere else?
+May 16 16:10:42 <apeiros>	:) oh yes, it's nice. self.call() :D
+May 16 16:10:47 <apeiros>	no
+May 16 16:10:56 <apeiros>	since you're in code literals everywhere
+May 16 16:11:05 <eek>	ok
+May 16 16:11:15 <apeiros>	class definitions, method definitions etc. - all code literals
+May 16 16:11:28 <apeiros>	ah, sorry, might not be obvious, there are 2 notations for code literals
+May 16 16:11:34 <eek>	one thing to think about (which may or may not be on your road map): it is very nice if you're able to refactor code between different places without any change
+May 16 16:11:41 <apeiros>	{ |args| ...code... } # that's one that works everywhere
+May 16 16:12:08 <apeiros>	and |args|<newline><increased indent>...code... # this one only works for the last method on a line
+May 16 16:12:30 <apeiros>	so as you might now understand: specifications, invariants, method definitions: all just code literals.
+May 16 16:12:33 <eek>	ie, one thing I've noticed is a pain in perl compared to Ruby: the existence of %hash dereffed with $hash{stuff} compared to $hashref dereffed with $hashref->{stuff} makes any code that contain %hash a pain to refactor
+May 16 16:12:52 <eek>	right
+May 16 16:13:07 <apeiros>	eek, agreed, I don't do that kind of notion :)
+May 16 16:13:43 <apeiros>	I'd like to think about prefixes as methods, even though optimized away by the parser
+May 16 16:14:20 <eek>	what I was thinking of in this context was the possible change from foo(stuff) when you have something directly in a method definition changing to .foo(stuff) when you have it in a code literal - if I understood this correctly
+May 16 16:14:45 <apeiros>	as in: foo = 'foo' (a symbol), $foo --> 'foo'.$@ (in ruby terms, since @ denotes unary methods)
+May 16 16:15:22 <apeiros>	a method definition is a code literal - so I can't do any differences there
+May 16 16:15:51 <apeiros>	and the things you see without prefixes are primitives (I refer to everything that hooks directly into the vm as primitives)
+May 16 16:16:32 <eek>	ah, now I think I see the pattern in the code
+May 16 16:18:34 <apeiros>	:-)
+May 16 16:18:42 <eek>	in List, what does memory. signify?
+May 16 16:19:00 <apeiros>	ah, memory is one example of a primitive
+May 16 16:19:13 <apeiros>	it is a pseudo-object representing the memory fragment every object can have
+May 16 16:19:31 <apeiros>	similar to rubinius' tuple-space I think
+May 16 16:19:48 <eek>	ah
+May 16 16:20:03 <apeiros>	that allows low level things to be implemented directly in halsbe
+May 16 16:20:15 <apeiros>	such as hashes or arrays
+May 16 16:21:25 <eek>	ok, I'll do some more syntax questions: ! in memory.copy(!owner, !offset * memory.reference_size, !length * memory.reference_size, 0)
+May 16 16:21:26 <eek>	?
+May 16 16:21:34 <apeiros>	explicit closure
+May 16 16:21:59 <apeiros>	since everything is code literals, doing implicit closures would be leaking like a sieve
+May 16 16:22:11 <apeiros>	so you have to explicitly close over variables from a surrounding scope
+May 16 16:23:06 <eek>	uhm, I don't get this.  is that like proc { owner } - creating a closure returning that variable, so it is can be available later?  or ... ?
+May 16 16:23:35 <apeiros>	well, see, $foo = 1; { $foo = 2 }; $foo // => 1
+May 16 16:23:44 <apeiros>	while $foo = 1; { !foo = 2 }; $foo // => 2
+May 16 16:24:10 <eek>	so, refer to outer scope
+May 16 16:24:11 <apeiros>	ups, add a .call after } in both examples :)
+May 16 16:24:16 <apeiros>	yes
+May 16 16:24:33 <apeiros>	what scope it is is determined at parsetime, it searches outer scopes until it finds a defined $foo
+May 16 16:24:44 <apeiros>	and will close over that
+May 16 16:24:56 <apeiros>	(only that single variable, not the whole scope)
+May 16 16:25:45 <apeiros>	I like using the ! for that as it somewhat says "pay attention there" :)
+May 16 16:26:17 <eek>	what would $offset do if there was no offset defined in that context?
+May 16 16:26:25 <apeiros>	raise
+May 16 16:26:38 <eek>	at parse time, then?
+May 16 16:26:46 <apeiros>	I think I could do that, yes
+May 16 16:27:07 <apeiros>	actually a good idea
+May 16 16:27:29 <apeiros>	I can't do it though if something is eval'ed within the same scope
+May 16 16:27:50 <eek>	assuming you want to allow variable leakage between those
+May 16 16:28:05 <apeiros>	between an eval and a scope?
+May 16 16:28:10 <eek>	yeah
+May 16 16:28:13 <apeiros>	sure I want to, but only if requested
+May 16 16:28:25 <eek>	that's new, I think
+May 16 16:28:30 <apeiros>	not really
+May 16 16:28:36 <apeiros>	eval("var=3",binding)
+May 16 16:28:40 <apeiros>	in ruby
+May 16 16:29:10 <eek>	but does the binding acquire var if it didn't exist?
+May 16 16:29:27 <apeiros>	doesn't seem like...
+May 16 16:29:31 <apeiros>	interesting
+May 16 16:29:35 <apeiros>	didn't know that
+May 16 16:29:46 <apeiros>	ruby -e 'var=1;eval("var=3"); p var '
+May 16 16:29:46 <apeiros>	3
+May 16 16:30:02 <apeiros>	ruby -e 'eval("var=3"); p var '
+May 16 16:30:02 <apeiros>	-e:1: undefined local variable or method `var' for main:Object (NameError)
+May 16 16:30:15 <eek>	that's what I thought
+May 16 16:30:30 <eek>	it seems like it could speed up things a lot to block that feature
+May 16 16:30:34 <eek>	and I don't think anybody would miss it
+May 16 16:30:46 <apeiros>	you're probably right
+May 16 16:31:44 <apeiros>	it'd require reallocation of the code-block if I had to acquire additional local variables
+May 16 16:31:45 <eek>	in another direction: with regards to secondary literals, are you going to make that static or extensible?
+May 16 16:31:54 <apeiros>	fully extensible
+May 16 16:32:04 <eek>	shared idea with what I've been thinking of
+May 16 16:32:08 <apeiros>	secondary literals are secondary because they have to call into halsbe code for construction
+May 16 16:32:15 <eek>	right
+May 16 16:32:25 <apeiros>	they are literals however as the value will end up in the bytecode
+May 16 16:33:13 <eek>	en passant: if I was designing, I would probably also delegate date/datettime to secondary status
+May 16 16:33:27 <apeiros>	rationale?
+May 16 16:34:10 <eek>	minimizing language size, delegating things that could be better in libraries to libraries, too complex area to be sure I would really make it right the first time
+May 16 16:34:24 <apeiros>	ah, well...
+May 16 16:34:30 <apeiros>	not the first time for me, yknow ;-)
+May 16 16:34:46 <apeiros>	http://butler.rubyforge.org/svn/Version%201.0/chronos_library/lib/chronos/
+May 16 16:34:52 <eek>	mostly that libraries are generally more flexible to mod than the core language
+May 16 16:34:57 <apeiros>	I still should clean it up and publicate it.
+May 16 16:34:59 <eek>	ah :)
+May 16 16:35:33 <apeiros>	and since core libraries are halsbe too, that should not be an issue either
+May 16 16:36:22 <eek>	I've done it a few times myself and used other people's libraries, none that I'm 100% happy with (including my own), which is why I think I wouldn't be happy the "first" (actually, third or fourth) time ;)
+May 16 16:36:42 <eek>	anyway, that is very minor detail
+May 16 16:36:51 <apeiros>	the one I linked to is my 3rd
+May 16 16:36:55 <eek>	ah
+May 16 16:37:01 <eek>	I'm going to have to leave shortly
+May 16 16:37:07 <apeiros>	it's a port of my 2nd which I wrote in php
+May 16 16:37:10 <eek>	I wonder if there's something I should try to look at
+May 16 16:37:13 <apeiros>	php is awful for that though
+May 16 16:37:33 <eek>	four possibilities come up as immediate ones:
+May 16 16:37:38 <apeiros>	well, datetime.rb is nice. but I should tell you that it's not in the final form. the final form is moving all calendar specific things to modules.
+May 16 16:37:38 <eek>	- looking into type systems more deeply
+May 16 16:38:00 <apeiros>	so that you can use it with other calendars just as well. such as chinese, discordian, jewish, julian, ...
+May 16 16:38:00 <eek>	- looking into how to hook things with Coq
+May 16 16:38:27 <eek>	- Looking into how we could define stuff around relations more in depth
+May 16 16:38:51 <eek>	- Learning more about XST as a possible way to deal with things
+May 16 16:38:58 <apeiros>	XST?
+May 16 16:39:29 <eek>	Extended Set Theory, as I mentioned - an alternative to relational processing, with the possiblitiy of also defining memory fields etc
+May 16 16:39:34 <apeiros>	ah
+May 16 16:39:42 <apeiros>	yes, extended set theory stuck, but xst not :)
+May 16 16:40:09 <apeiros>	are you fine with that conversation being stored in the halsbe project directory?
+May 16 16:41:45 <eek>	sure

@@ -1,0 +1,288 @@
+#!/usr/bin/env halsbe
+author:   Stefan Rusterholz
+revision: $Rev$
+date:     $Date$
+encoding: utf-8
++++
+
+---
+= Description
+	Lists are immutable, ordered, integer-indexed collections of any object.
+	List indexing starts at 0.
+	Most methods allow negative indices and interpret them relative
+	to the end of the List. So a negative index becomes
+	length+index. Example: index -3 in a List with 8 elements
+	becomes 8 + -3 = 5.
+	That also means -1 is the last index.
+
+= Literal
+	$list = (1, 2, 3)
+
+= Notes
+	List is a special class as it is the class used to represent literal lists.
+	It is also used for expansions and contractions.
+	*(1, 2, 3) = 1, 2, 3
+	1, 2, 3    = *(1, 2, 3)
+
+= Creating it from your class
+	List is a bit special regarding creation as it is quite low level.
+	There are three ways you can go about creating a list:
+	* You use a literal
+	* Use :List.new if you have all elements for the list in a continous zone of memory
+	* Use an Array to gather the elements together and call to_list on it.
+---
+.class 'List':
+	.specification:
+		'has a literal':
+			(1, 2, 3).is :List
+		'is immutable':
+			:List.instance_methods.empty // it has only queries
+		'has a size':
+			(1, 2, 3).size = 3
+		'a single object is the same as an expanded single sized list':
+			1 = *(1)
+		'can return the first element':
+			(1, 2, 3).first = 1
+		'can return the first n elements':
+			(1, 2, 3).first(2) = (1, 2)
+		'can return the last element':
+			(1, 2, 3).last = 3
+		'can return the last n elements':
+			(1, 2, 3).last(2) = (2, 3)
+		'can return the remaining elements':
+			(1, 2, 3, 4, 5).rest = (2, 3, 4, 5)
+		'can return the remaining elements after n elements':
+			(1, 2, 3, 4, 5).rest(2) = (3, 4, 5)
+		'can return individual elements':
+			(1, 2, 3).at(0) = 1
+		'can return individual elements with negative indices':
+			(1, 2, 3).at(-1) = 3
+		'returns nil for nonexisting positive indices':
+			(1, 2, 3).at(3) = nil
+		'returns nil for nonexisting negative indices':
+			(1, 2, 3).at(-4) = nil
+		'returns multiple indices as a list':
+			(1, 2, 3, 4, 5).at(0, -1, 2) = (1, 5, 3)
+		'can return a slice':
+			(1, 2, 3, 4, 5).slice(2,2) = (3, 4)
+		'can return a slice from a negative index':
+			(1, 2, 3, 4, 5).slice(-2,2) = (4, 5)
+		'can return a reverted slice':
+			(1, 2, 3, 4, 5).slice(2,-2) = (2, 1)
+		'can return a reverted slice from a negative index':
+			(1, 2, 3, 4, 5).slice(-2,-2) = (4, 3)
+		'can return a range':
+			(1, 2, 3, 4, 5).range(2,4) = (3, 4, 5)
+		'can return a range from a negative index':
+			(1, 2, 3, 4, 5).range(-2,4) = (4, 5)
+		'can return a range to a negative index':
+			(1, 2, 3, 4, 5).range(1,-3) = (2, 3)
+		'can return a reverted range':
+			(1, 2, 3, 4, 5).range(4,2) = (5, 4, 3)
+		'can return a reverted range from a negative index':
+			(1, 2, 3, 4, 5).range(-3,1) = (3, 2)
+		'can return a reverted range to a negative index':
+			(1, 2, 3, 4, 5).range(4,-2) = (5, 4)
+		'can be reverted':
+			(1, 2, 3).reverted = (3, 2, 1)
+		'can iterate over its elements':
+			(1, 2, 3).should yield: (1, 2, 3), with: 'each'
+		'can iterate reversely over its elements':
+			(1, 2, 3).should yield: (1, 2, 3), with: 'reverted'
+
+	// immutable adds invariants
+	.immutable
+
+	---
+	= Arguments
+	* obj: the object to copy the memory from
+	* length: the number of references
+	* offset: the offset at which to start (in bytes)
+	---
+	.new:
+		body: |obj, length, offset: 0|
+			memory.allocate $length * memory.reference_size, 'fixed'
+			memory.copy(obj, offset, length * memory.reference_size)
+
+	---
+	Returns the number of elements in this List
+	`('a', 'b', 'c').size // => 3`
+	---
+	.query 'size':
+		body:
+			returns: memory.reference_capacity
+
+		postconditions:
+			'Returns an integer':
+				returned.is :Integer
+			'Is zero or positive':
+				returned >= 0
+
+	---
+	Whether the List is empty or not
+	---
+	.query 'empty':
+		body:
+			returns: memory.capacity = 0
+
+		postconditions:
+			'Is a boolean':
+				returned.is :Boolean
+
+	---
+	Get the element at a specific index of the List
+	---
+	.query 'at':
+		body: |*indices|
+			if $indices.size = 1:
+				$index: $indices.first
+				$index: .size + $index if $index < 0
+				if $index.between 0, .size:
+					returns: memory.read_reference($at * memory.reference_size)
+				else
+					returns: nil
+			else:
+				$tmp: :Array.new($indices.size)
+				$indices.each |index|
+					$index: .size + $index if $index < 0
+					if $index.between 0, .size:
+						!tmp.push memory.read_reference($index * memory.reference_size)
+					else
+						!tmp.push nil
+				returns: $tmp.to_list
+
+		postconditions:
+			// any idea is welcome...
+
+	---
+	Get +length+ elements starting at +offset+ from the List.
+	If +offset+ is negative, it is interpreted to be from the end, so -1 is starting at the last
+	element, -2 at the second last and so on.
+	If +length+ is negative, a reversed list is returned, starting at +offset+ the next +length+
+	elements towards index 0.
+	---
+	.query 'slice':
+		body: |offset, length|
+			if $offset < 0:
+				$offset +: .size
+				$offset: 0 if $offset < 0
+			else if $offset > .size:
+				$offset: .size
+
+			if $length > 0:
+				$length: .size - $offset if $offset + $length > .size
+				returns: :List.new(owner, $length, $offset * memory.reference_size)
+			else
+				$offset +: $length
+				$offset:   0 if $offset < 0
+				$length:   -$length
+				$tmp:      :Array.new($length)
+				$tmp.instance_eval
+					memory.copy(!owner, !offset * memory.reference_size, !length * memory.reference_size, 0)
+					reverse
+				returns: $tmp.to_list
+
+		postconditions:
+			// any idea is welcome...
+
+	---
+	Get all elements +from+ index +to+ index.
+	Negative indices are interpreted to be from the end, so -1 is starting at the last
+	element, -2 at the second last and so on.
+	If +from+ is greater than +to+, the returned list will be reversed.
+	---
+	.query 'range':
+		body: |from, to|
+			if $from < 0:
+				$from +: .size
+				$from: 0 if $from < 0
+			else if $from > .size:
+				$from: .size
+
+			if $to < 0:
+				$to +: .size
+				$to: 0 if $to < 0
+			else if $to > .size:
+				$to: .size
+
+			if $from <= $to:
+				returns: :List.new(owner, $to - $from, $from * memory.reference_size)
+			else
+				$tmp:      :Array.new($to - $from)
+				$tmp.instance_eval
+					memory.copy(!owner, !to * memory.reference_size, (!to - !from) * memory.reference_size, 0)
+					reverse
+				returns: $tmp.to_list
+
+		postconditions:
+			'returns a list':
+				returned.is :List
+
+	---
+	Get a reversed list
+	---
+	.query 'reversed':
+		body:
+			$tmp: :Array.new(memory.reference_capacity)
+			$tmp.instance_eval
+				memory.copy(!owner, 0, memory.capacity, 0)
+				reverse
+			returns: $tmp.to_list
+
+		postconditions:
+			// any idea is welcome...
+
+	---
+	Iterate over the elements in this List
+	---
+	.query 'each':
+		body: |block: nil|
+			if $block:
+				0.step(memory.reference_capacity, memory.reference_size) |i|
+					!block.call(memory.read_reference($i))
+			else:
+				returns: :Enumerator.new // FIXME implement
+
+		postconditions:
+			'returns owner if block given':
+				returned = owner if $block
+
+	---
+	Get the first n elements in this List
+	---
+	.query 'first':
+		body: |n: 1|
+			$n: memory.reference_capacity if $n > memory.reference_capacity
+			returns: :List.new(owner, $n)
+
+		postconditions:
+			'returns a list':
+				returned.is :List
+
+	---
+	Get the last n elements in this List
+	---
+	.query 'last':
+		body: |n: 1|
+			$offset: memory.capacity - $n * memory.reference_size
+			$offset: 0 if $offset < 0
+			$n:      memory.reference_capacity if $n > memory.reference_capacity
+			returns: :List.new(owner, $n, $offset)
+
+		postconditions:
+			'returns a list':
+				returned.is :List
+
+	---
+	Get all but the first n elements in this List
+	---
+	.query 'rest':
+		body: |n: 1|
+			$n:      memory.reference_capacity if $n > memory.reference_capacity
+			$length: memory.reference_capacity - $n
+			$offset: $n * memory.reference_size
+			returns: :List.new(owner, $length, $offset)
+
+		postconditions:
+			'returns a list':
+				returned.is :List

@@ -1,0 +1,11 @@
++++
+
+---
+This is a doc comment
+---
+
+// This is an inline comment
+
+/- This is a nested comment without actually nesting -/
+
+/- This is a /- really nested comment -/ oh yes -/

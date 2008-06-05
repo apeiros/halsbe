@@ -1,0 +1,10 @@
+THREADING
+
+implicit read/write mutexes
+query sets a read mutex
+method sets a write mutex
+
+automagic mutex/monitor per object (object.(read_)?synchronize) using the objects
+implicit read/write mutexes
+
+query can be auto-futurized/-parallelized/-threaded.

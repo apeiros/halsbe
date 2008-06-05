@@ -1,0 +1,5 @@
+grammar Test
+	rule simple
+		"a"{2,5}
+	end
+end
