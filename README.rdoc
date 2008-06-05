@@ -13,3 +13,4 @@ At the moment, the interesting stuff can be found in (roughly in this order):
 * /implementation/lib/halsbe -> implementation of the prototype parser & vm
 * /ideas -> my thoughts spilled on digital paper
 * /discussions -> exchanges with others on irc or other media (only added with consent)
+
