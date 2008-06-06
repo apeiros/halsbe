@@ -6,6 +6,12 @@ encoding: utf-8
 +++
 
 ---
+// within an export callback
+
+:Application.mixin 'CLI'
+---
+
+---
 The CLI module provides rudimentary methods for Command Line Interface
 Applications.
 ---
@@ -13,8 +19,12 @@ Applications.
 	.specification:
 		// FIXME implement
 
-	.invariants:
-		// FIXME implement
+	---
+	The name of the current executable (argv[0] in C)
+	---
+	.query 'executable':
+		body:
+			returns: executable
 	
 	---
 	The arguments passed to this executable
@@ -26,6 +36,17 @@ Applications.
 		postconditions:
 			'Returns a List':
 				returned.of_type :List
+
+	---
+	The arguments passed to this executable
+	---
+	.query 'env':
+		body:
+			returns: env
+
+		postconditions:
+			'Returns a HashMap':
+				returned.of_type :HashMap
 
 	---
 	The standard IO, read/writable
@@ -76,18 +97,18 @@ Applications.
 	If multiple strings are passed, each is written on a new line.
 	The arguments must be convertable to ByteStream's
 	---
-	.delegate 'write_line', stdout
+	.delegate_query 'write_line', stdout
 
 	---
 	Write a line to stderr. Always appends a newline.
 	If multiple strings are passed, each is written on a new line.
 	The arguments must be convertable to ByteStream's
 	---
-	.delegate 'log', stderr, 'write_line'
+	.delegate_query 'log', stderr, 'write_line'
 
 	---
 	Read a line from stdin.
 	Returns nil if end of document is reached.
 	---
-	.delegate 'read_line', stdin
+	.delegate_query 'read_line', stdin
 
