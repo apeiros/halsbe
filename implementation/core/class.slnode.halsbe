@@ -1,0 +1,48 @@
+#!/usr/bin/env halsbe
+author:   me
+revision: 1
+encoding: utf-8
++++
+
+class 'SLNode':
+	specification:
+		"Should initialize":
+			SLNode.new
+		"Stores a value":
+			node: SLNode.new(1)
+			node.value = 1
+		"Stores a link":
+			inner: SLNode.new
+			node: SLNode.new(1, inner)
+			node.link = inner
+		"Arguments are value and node":
+			SLNode.new(value: 1, link: SLNode.new)
+	
+	initialize:
+		body: |value: nil, link: nil|
+			@value: value
+			@link:  link
+		post_condition:
+			new.value = value
+			new.link  = link
+	
+	---
+	The value stored in this node
+	---
+	query 'value':
+		body:
+			return: @value
+		postconditions:
+			"should return the value":
+				returned = @value
+	
+	---
+	The node this node is linked to
+	---
+	query 'link':
+		body:
+			return: @link
+		postconditions:
+			"should return the link":
+				returned = @link
+	

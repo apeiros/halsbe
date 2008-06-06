@@ -1,0 +1,21 @@
+TERMINOLOGY
+
+Argument:
+Branch:
+Class:
+Condition:
+Conditional:
+Initializer:
+	There are several kinds of initializers in halsbe.
+	Most common initializers are object initializers.
+	You can also have initializers for global and instance-variables.
+	The default initializer for variables raises an exception.
+Iterator:
+Loop:
+Object:
+Receiver:
+	In a method call, the receiver is the object the method is called upon.
+Trait:
+	A trait is a container for methods and instance-variable initializers.
+	Traits can be mixed into objects so those objects can use the trait's
+	methods and initializers.

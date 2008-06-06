@@ -1,0 +1,93 @@
+#!/usr/bin/env halsbe
+author:   Stefan Rusterholz
+revision: $Rev$
+date:     $Date$
+encoding: utf-8
++++
+
+---
+The CLI module provides rudimentary methods for Command Line Interface
+Applications.
+---
+.module 'CLI':
+	.specification:
+		// FIXME implement
+
+	.invariants:
+		// FIXME implement
+	
+	---
+	The arguments passed to this executable
+	---
+	.query 'arguments':
+		body:
+			returns: argv
+
+		postconditions:
+			'Returns a List':
+				returned.of_type :List
+
+	---
+	The standard IO, read/writable
+	---
+	.query 'stdio':
+		body:
+			returns: stdio
+
+		postconditions:
+			'Is an IO':
+				returned.of_type :IO
+
+	---
+	The standard in IO, read only
+	---
+	.query 'stdin':
+		body:
+			returns: stdin
+
+		postconditions:
+			'Is an IO':
+				returned.of_type :IO
+
+	---
+	The standard out IO, write only
+	---
+	.query 'stdout':
+		body:
+			returns: stdout
+
+		postconditions:
+			'Is an IO':
+				returned.of_type :IO
+
+	---
+	The standard error IO, write only
+	---
+	.query 'stderr':
+		body:
+			returns: stderr
+
+		postconditions:
+			'Is an IO':
+				returned.of_type :IO
+
+	---
+	Write a line to stdout. Always appends a newline.
+	If multiple strings are passed, each is written on a new line.
+	The arguments must be convertable to ByteStream's
+	---
+	.delegate 'write_line', stdout
+
+	---
+	Write a line to stderr. Always appends a newline.
+	If multiple strings are passed, each is written on a new line.
+	The arguments must be convertable to ByteStream's
+	---
+	.delegate 'log', stderr, 'write_line'
+
+	---
+	Read a line from stdin.
+	Returns nil if end of document is reached.
+	---
+	.delegate 'read_line', stdin
+

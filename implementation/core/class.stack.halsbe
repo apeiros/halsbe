@@ -1,0 +1,127 @@
+#!/usr/bin/env halsbe
+author:   me
+revision: 1
+encoding: utf-8
+import:   com.halsbe.slnode
++++
+
+---
+class: Stack
+This is documentation comment. Should comment the *what*.
+The marker is optional and mostly intended for 'virtual' methods.
+The default doc tool accepts markup here.
+The default doc-coverage tool will notice this kind of comment.
+Should either be before the class, trait or method or have the marker.
+---
+.class 'Stack':
+
+	---
+	The behaviour of the class should be here.
+	Notice that thanks to pre- and post-conditions, you merely
+	write some statements here to execute.
+	The doc tools also enable you to extract the specification.
+	---
+	.specification: // instance method 'specification' on Class
+		"New stack is empty": // block argument with Symbol "New stack is empty"
+			stack: Stack.new
+			stack.empty? and stack.length.zero?
+
+		"Accepts an element to be added":
+			stack: Stack.new
+			stack.push 42
+	
+	---
+	The class invariant must be maintained before and after any
+	method call. If a method call changes the state of the object
+	in a way that the invariant is violated, it will raise.
+	---
+	.invariants:
+		"Positive length or empty":
+			@length >= 0
+
+	---
+	The initialize method is called on newly created objects and
+	serves to initialize it.
+	The first argument to 'method' is the method name, the second
+	argument is 'body'.
+	Via named arguments you can change the order, a good choice is
+	precondition, body, postcondition
+	---
+	.initialize:
+		body:
+			@list:   nil
+			@length: 0
+
+		postconditions:
+			"Is empty":
+				.empty?
+	
+	---
+	Queries are a vital part of halsbe. Queries have the property
+	of not changing the state of an object. As such they are the only
+	allowed methods in pre- and postconditions.
+	---
+	.query 'empty?':
+		body:
+			return @length = 0 // `not @list` would work the same
+		postconditions:
+			"Is a boolean":
+				returned.is? Boolean
+	
+	---
+	The number of items on the stack.
+	The 'returned' in the postcondition is a keyword.
+	---
+	.query 'length':
+		'body':
+			return @length
+		.postconditions:
+			"Is an integral number":
+				returned.is? Integer
+			"Is positive or zero":
+				returned >= 0
+	
+	---
+	Returns the top element.
+	Unlike in some other languages with contracts we don't need to
+	specify that top should not mutate the stack since it being a query
+	already ensures that.
+	---
+	.query 'top':
+		return .empty? ? nil : @list.value
+
+	---
+	methods are allowed to change the state of the object and to return
+	a value.
+	The 'old' in the postconditions is a keyword, it retains the state
+	of the object before the method call.
+	---
+	.method 'push':
+		.body: |item| // it's the body block that accepts the arguments
+			@list: SLNode.new(item, @list)
+
+		.postconditions:
+			"Added item is on top":
+				.top.same?(item)
+			"Length is incremented by one":
+				old.length + 1 = @length
+			"Stack is not empty"
+				not .empty?
+
+	---
+	remove and return the top element of the stack.
+	---
+	.method 'pop':
+		.body:
+			if @list
+				return: @list.value // implicit return value now is @list.value
+				@list:  @list.link
+			else
+				@list: nil
+		.postconditions:
+			"Length is decremented by 1 for non-empty lists":
+				old.empty? or old.length - 1 = @length
+			"Length does not go below 0":
+				@length >= 0
+			"Returns the old top value":
+				returned.same?(old.top)

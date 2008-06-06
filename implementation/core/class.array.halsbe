@@ -1,0 +1,150 @@
+#!/usr/bin/env halsbe
+author:   Stefan Rusterholz
+revision: $Rev$
+date:     $Date$
+encoding: utf-8
++++
+
+---
+Arrays are ordered, integer-indexed collections of any object.
+Array indexing starts at 0.
+Most methods allow negative indices and interpret them relative
+to the end of the array. So a negative index becomes
+length+index. Example: index -3 in an array with 8 elements
+becomes 8 + -3 = 5.
+That also means -1 is the last index.
+---
+.class 'Array':
+	.specification:
+		// FIXME implement
+
+	.invariants:
+		'Positive size or empty':
+			@size >= 0
+	
+	.new:
+		body: |size: 0|
+			memory.allocate memory.reference_size * (size, 4).max, 'both'
+			@size: size
+
+	---
+	Returns the number of elements in this Array
+	`%a{'a', 'b', 'c'}.size // => 3`
+	---
+	.query 'size':
+		body:
+			returns: @size
+
+		postconditions:
+			'Identical to size':
+				returned = @size
+
+	---
+	Whether the array is empty or not
+	---
+	.query 'empty':
+		body:
+			returns: @length = 0
+
+		postconditions:
+			'Is a boolean':
+				returned.is :Boolean
+
+	---
+	Add one or many elements after the end of the Array
+	---
+	.method 'push':
+		body: |*elements|
+			// grow the memory if required, grow it by at least the amount needed and
+			// at maximum by memory.maxgrow
+			if @size + $elements.size > memory.reference_capacity:
+				memory.grow(
+					($elements.size, ((@size << 1) * memory.reference_capacity, memory.maxgrow).min).max
+				)
+			memory.copy($elements, 0, $elements.size * memory.reference_size, @size * memory.reference_size)
+		
+		postconditions:
+			'Returns self':
+				returned = owner
+			'Grows by the amount of added elements':
+			  old.size = @size + elements.size
+			'The last elements are the added elements':
+			 	.last($elements.size) = elements
+
+	---
+	Remove one or many elements from the end of the Array
+	If n is not set and the Array is not empty, it will remove the last element from the Array and
+	return it.
+	If n is not set and the Array is empty, it will return nil.
+	If n is set, it will remove the last n elements - in case of the Array containing less than n
+	elements it will just be all remaining elements - and return an Array containing them in the
+	same order.
+	---
+	.method 'pop':
+		body: |n: nil|
+			if $n then
+				$n:      @size if $n > @size
+				$offset: memory.reference_size * (@size - $n)
+				returns: :Array.new($n)
+				returns.instance_eval
+					memory.copy(!owner, !offset, !n * memory.reference_size, 0)
+				@size -: $n
+			else
+				if .empty then
+					returns: nil
+				else
+					@size -: 1
+					returns: memory.read_reference(@size * memory.reference_size)
+			if memory.reference_capacity > 4 and @size << 1 < memory.reference_capacity:
+				memory.shrink(@size << 1)
+			
+		postconditions:
+			'Returns the last n elements':
+				returned = old.last($n)
+			'Shrinks by the amount of popped elements':
+				returned.size + @size = old.size
+			'Does not return more elements than asked for':
+				not $n or $n <= return.size
+
+	---
+	Add one or many elements in front of the Array
+	---
+	.method 'unshift':
+		body: |*elements|
+			memory.front_grow($elements.size * memory.reference_size)
+			memory.copy($elements, 0, $elements.size * memory.reference_size, 0)
+
+		postconditions:
+			'Returns self':
+				return = owner
+			'Grows by the amount of added elements':
+			  old.size = @size + elements.size
+			'The first elements are the added elements':
+			 	.first($elements.size) = elements
+
+	---
+	Remove one or many elements from the front of the Array
+	---
+	.method 'shift':
+		body: |n: nil|
+			if $n then
+				$n:      @size if $n > @size
+				return:  :Array.new($n)
+				return.instance_eval
+					memory.copy(!owner, 0, !n * memory.reference_size, 0)
+				@size -: $n
+			else
+				if .empty then
+					return :nil
+				else
+					@size -: 1
+					return: memory.read_reference(0)
+			memory.front_shrink($n or 1)
+			
+		postconditions:
+			'Returns the first n elements':
+				return = old.first($n)
+			'Shrinks by the amount of shifted elements':
+				return.size + @size = old.size
+			'Does not return more elements than asked for':
+				not $n or $n <= return.size

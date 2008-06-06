@@ -1,0 +1,142 @@
+#!/usr/bin/env halsbe
+author:   Stefan Rusterholz
+revision: $Rev$
+date:     $Date$
+encoding: utf-8
++++
+
+---
+---
+.class 'Bytes':
+	.specification:
+
+	.invariants:
+		"Positive size or empty":
+			@size >= 0
+	
+	.new:
+		body:
+			return .allocate(0, 0, 'growable')
+
+		postconditions:
+			"Is empty":
+				.empty?
+
+	---
+	How many bytes are in this Bytes
+	---
+	.query 'size':
+		body:
+			return @size
+
+		postconditions:
+			"Identical to size":
+				return = @size
+
+	---
+	Whether the bytes is empty or not
+	---
+	.query 'empty?':
+		body:
+			return @length = 0
+
+		postconditions:
+			"Is a boolean":
+				return.is Boolean
+
+	---
+	Modify a part of the Bytes
+	---
+	.method '[]:':
+		body: |start, length, value|
+			// grow the memory if required
+			if $start+$value.size != @data.size:
+				memory.resize($start+$value.size)
+			
+			memory.move($value, 0, $value.size, $start, $value.size)
+		
+		postconditions:
+			"Returns self":
+				return = owner
+
+	---
+	Return a part of the string
+	---
+	.query '[]':
+		body: |offset, length|
+			!return: Bytes.new
+			!return[0, $length]: owner[$offset, $length]
+
+	---
+	Expand patterns like a-f to abcdef
+	---
+	.query 'expand':
+		body:
+			!return: Bytes.new
+			$offset: 0
+			each.with_index |byte, index|
+				if byte = 45 and index.non_zero: // a '-' char
+					!return << owner.slice(!offset, $index - !offset - 2)
+					!offset: $index+2
+					$from = owner[!offset - 2].char
+					$to   = owner[!offset].char
+					$from.step $to |char|
+						!return << $char
+			!return << owner.slice($offset)
+
+
+lowercased
+uppercased
+case_swapped
+capitalized
+camel_cased
+snake_cased
+
+lowercase
+uppercase
+case_swap
+capitalize
+camel_case
+snake_case
+
+char(index)
+range(from, to)
+slice(from, chars)
+byte(index)
+byte_range(from, to)
+byte_slice(from, to)
+
+line
+
+matching(regex, *captures, offset: 0)
+all_matching(regex, *captures, offset: 0)
+match(regex)
+match_all(regex)
+split(string_or_regex)
+
+=, <, >, <=, >=, <=>, <>
+<<, >>, +, -, *, /, %, ^, ~
+
+delete(*strings_or_patterns)
+replace(string_or_pattern, replacement)
+replace_all(*args)
+count(*strings_or_patterns)
+
+index(string_or_pattern)
+rindex(string_or_pattern)
+contains(string_or_pattern, times: 1)
+starts_with(string)
+ends_with(string)
+
+chopped
+chomped
+stripped
+left_stripped
+right_stripped
+
+chop
+chomp
+strip
+left_strip
+right_strip
+
