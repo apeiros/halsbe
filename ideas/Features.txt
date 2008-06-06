@@ -1,7 +1,8 @@
 FEATURES
 
+- Fully object oriented (Booleans, Integers, Strings, Arrays are all objects)
 - Contracts minimize your testing work and maximize stability and maintainability
-- Very little keywords reduce the amount to memorize
+- Very few keywords and syntax reduce the amount to memorize
 - Explicit distinction between mutating methods and non-mutating methods (queries)
   enables automatic parallelization
 - Named arguments
@@ -21,9 +22,12 @@ FEATURES
 	read and WritableIO only if opened for write - that way methods that can't be used aren't even
 	present so you can easily test for a method availability to verify that an object can do what
 	you need it to do)
-- Implicit return value is always owner (adequate to self or this in most languages)
-- Explicit return value can be set via either using the return keyword or by setting the returns
+- Implicit return value is always owner (the equivalent to self or this in other OO languages)
+- Explicit return value can be set via either using the return keyword or by setting the return's
 	pseudo local variable
 - Trivial parallel iterations using `for a,b,c in list1,list2,list3`
+- Protocols to duckily verify your objects bring with them what you need them to
+  (A protocol defines what methods must be present, arguments those methods can accept can
+  also partially be protocolified)
 - Strict styling requirements lower the effort to read foreign code (lazy mode supported - for
   beginners and not yet convinced people)

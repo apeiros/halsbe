@@ -1,4 +1,5 @@
 What is needed?
+	Environment (stdin, stdout, stderr, user, os, env-vars, current dir & file, ...)
 	Input (stdin, argv, option parsing, file, network, fileformats, database)
 	Output (stdout, stderr, logging, file, network, fileformats, database)
 	Logging (stdout, stderr, notification, file, ...)
@@ -17,27 +18,33 @@ What is needed?
 	Exceptions
 
 Core classes, modules & singletons:
-	Class (module) - basic methods for prototypes
-	Block (class) - basic piece of block with lookup-tables for: locals, bound-locals (from other scopes)
-	Method < Block (class) - adds pseudo-variables: owner; adds lookup-tables for: instance-variables
-	UnboundMethod < Block (class) - adds the information whether it can be run without being bound
-	Object (class) - basic object features (object_id, prototype)
-	StandardObject (module) - useful object features
 	Application (singleton) - information about current runtime (scriptpath, pid, childprocesses, ...)
 	Current (singleton) - information
-	ReadableIO (module) - read methods for IOs
-	WritableIO (module) - write methods for IOs
+	Standard (Singleton) - standards for this platform/application (stdin, stdout, stderr, tmpdir, file_separator, path_separator)
+
+	Block (class) - basic piece of block with lookup-tables for: locals, bound-locals (from other scopes)
+	Method < Block (class) - adds pseudo-variables: owner; adds lookup-tables for: instance-variables
+	Object (class) - basic object features (object_id, prototype)
 	Path (class) - represents paths on the system, also knows about working dir, libraries, executable, ...
 	PathList (class) - a collection of paths with collective testing methods like exists, file_exists, ...
+
+	Class (module) - basic methods for prototypes
+	ReadableIO (module) - read methods for IOs
+	WritableIO (module) - write methods for IOs
+
+	Array (class)
 	File (class) - handling filedata
 	List (class)
-	Array (class)
 	Dict (class)
 	Hash (class)
+	StandardObject (module) - useful object features
+	UnboundMethod < Block (class) - adds the information whether it can be run without being bound
 
 Datastructures
 	Generic
-		Struct
+		List (ordered, duplicates, immutable)
+
+		Struct (ordered, duplicates, fixed, mutable)
 		Shelve (OpenStruct)
 	
 		Stack

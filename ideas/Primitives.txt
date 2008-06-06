@@ -5,8 +5,16 @@ About
 	halsbe.
 
 List
-	memory: manage the memory fragment allocated for an individual object.
-	        see Memory.txt
+	argv:     arguments passed in at program start
+	stdio:    IO.combine(stdin, stdout)
+	stdin:    standard readable IO
+	stdout:   standard informal writable IO
+	stderr:   standard error writable IO
+	env:      environment of the process
+	memory:   manage the memory fragment allocated for an individual object.
+	          see Memory.txt
+	old:      in postconditions the object as it was before the method invocation
+	returned: in postconditions the returnvalue
 	vm:     Bootstrap Object implementation in halsbe
 	object:
 		-memory fragment
