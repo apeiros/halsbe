@@ -1,0 +1,48 @@
+VERSIONING
+
+The public version control system will enforce version numbers.
+A version number is split in 3 parts:
+Major.Minor.Patch
+
+The intention is that Patch level changes mean that the library still fulfills the same contracts,
+or in other words: works the same (only bugfixes are applied).
+A Minor change means that a version with the same Major but a higher Minor is backwards compatible
+to all with the same or a lower Minor number (only methods or postconditions are added or preconditions
+removed)
+
+Patch is increased if
+	Only implementation changed (body part of methods)
+
+Minor is increased if (any)
+	Added Classes/Modules
+	Added Methods
+	Added Arguments to existing Methods
+	Added Invariants
+	Added Postconditions (patch?)
+	Removed Preconditions (patch?)
+
+Major is increased if (any)
+	Removed Classes/Modules
+	Removed Methods
+	Removed Arguments
+	Removed Postconditions
+	Removed Invariants
+	Added Preconditions
+
+Or inversed:
+	Added class/module    -> minor
+	Removed class/module  -> major
+	Added method          -> minor
+	Removed method        -> major
+	*Added argument       -> minor
+	Removed argument      -> major (possible backwards incompatibility)
+	*Added invariant      -> minor
+	Removed invariant     -> major (possible backwards incompatibility)
+	*Added precondition   -> major (possible backwards incompatibility)
+	Removed precondition  -> minor (or patch?)
+	*Added postcondition  -> minor (or patch?)
+	Removed postcondition -> major (possible backwards incompatibility)
+*on existing (class, module, method)
+
+Rationale:
+	FIXME
