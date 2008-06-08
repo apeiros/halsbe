@@ -1,14 +1,76 @@
-Object
-	instance_variables
-	instance_variable(name)
-	instance_variable:(name, value)
-	class
-	traits
-	conditionals
-	features
-	methods
-	queries
-	feature(*name)
-	method:(name, body, precondition, postcondition)
-	query:(name)
-	responds_to(*name)
+OBJECT
+	Description
+		* has a unique (per runtime) id
+		* can be frozen (immutable)
+		* becomes instanciated
+		* becomes destroyed
+		* receives methods
+		* stores data
+
+	Primitive
+		Properties
+			In parens the number of bytes occupied.
+			The term "table" here doesn't refer a specific datastructure. It will be a map-type datastructure
+			taylored for the respective task.
+
+			(0) *object-id (0 because it is the address)
+			(4) *template: the object that contains the template-methods, -mixins, -conditionals and -invariants
+			(2) *flags
+				-zombie:    object is only preserved for destructor and must not be referenced again
+				-frozen:    object is frozen and must not be mutated
+				-readlock:  a method is reading from the object
+				-writelock: a method is writing to the object
+				-memory:    object has a memory fragment
+				-ivars:     has an ivar table
+				-observers: has observers
+				-eigen*:    has eigentmethods, -mixins, -conditionals and -invariants
+				-template*: object serves as template and hence has template methods, -mixins, -conditionals and -invariants
+			---
+			(4)  memory fragment:   a random access memory accessible only by this object
+			(4)  ivar table:        pointer to the instance-variable-table
+			(4)  observers:         pointer to an observer-table
+			(†)  conditionals mask: binary mask which conditionals/methods are active
+			--- (eigen*)
+			(4)  eigenmethods:      pointer to the eigenmethods table
+			(4)  eigenmixins:       pointer to the mixins List (object)
+			(4)  eigenconditionals: pointer to the conditionals List (object)
+			(4)  eigeninvariants:   pointer to the invariants table
+			--- (template*)
+			(4)  template methods:      pointer to the eigenmethods table
+			(4)  template mixins:       pointer to the mixins List (object)
+			(4)  template conditionals: pointer to the conditionals List (object)
+			(4)  template invariants:   pointer to the invariants table
+
+			* this properties are required
+			† variable amount of bytes, depending on how many conditionals/methods
+				are masked (not yet clear whether conditonals are masked or methods
+				directly).
+
+			A hence minimal object has an overhead of 6 bytes, an object
+			using all has at least 50 bytes.
+
+			Also see /ideas/Object Model.txt.
+
+		Capabilities
+			Method dispatch
+			Object id
+
+	Halsbe
+		Queries:
+			object_id               # => Fixnum
+			template                # => Object (FIXME: name? .class, .prototype, .template)
+			object_id_string        # => String
+			bytes_size              # => Fixnum
+			responds_to(*name)      # => Boolean
+			instance_variables      # => HashMap (name<String> => value<?>)
+			instance_variable(name) # => Object
+			traits                  # => List
+			conditionals            # => Dict (module<Symbol> => condition<Block>)
+			methods(*names)         # => Dict (name<String> => method<Query | Command>), all with no arguments
+			commands(*names)        # => Dict (name<String> => command<Command>), all with no arguments
+			queries(*names)         # => Dict (name<String> => query<Query>), all with no arguments
+
+		Method
+			instance_variable:(name, value)
+			method:(name, body, precondition, postcondition)
+			query:(name)

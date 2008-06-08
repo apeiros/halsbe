@@ -1,3 +1,29 @@
+Method dispatch:
+	object.foo
+		-> check objects eigenmethods
+		-> check objects templates templatemethods
+		-> check whether object has method_missing in eigenmethods
+		-> check whether objects template has method_missing in templatemethods
+		-> raise NoMethodError
+
+Instanciation:
+	object: Template.new
+		-> allocate memory
+		-> set template
+		-> call initialize from templates templatemethods
+		-> call initialize from each mixins templatemethods
+		-> return object
+
+Mixing:
+	Add a module to an object for template methods
+	object.mixin Module
+		-> add Module to the templatemixins List (replace technically)
+		-> merge the modules templatemethods into templatemethods with
+		-> callback to the module (Module.mixed)
+		-> return object
+
+
+
 Object
 	* is a container for modules (mixins & conditionals)
 	* has a prototype
@@ -33,5 +59,4 @@ Class
 	* is a container for modules
 	* is mixed into objects to provide delegation to a unified method lookup table for "instances"
 	  of the class
-
 

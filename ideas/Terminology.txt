@@ -1,21 +1,80 @@
 TERMINOLOGY
 
 Argument:
+	Arguments are additional values supplied to a method by its caller.
+	Also see Parameters.
 Branch:
 Class:
+	A module providing several facilities to help objects that act primarly as templates.
 Condition:
+	An expression that determines whether a statement is executed.
+	Example statements that come with conditions:
+	if/unless/while/until/case.
 Conditional:
+	A module mixed in in a special way. The methods of a conditionally mixed in module only become
+	active when the condition supplied when mixing it in is met.
+	Active here means the object won't respond to those methods and not list them as methods either
+	as long as the condition isn't met.
+	The methods can become inactive again when the condition is no longer met.
+Conditional Value:
+	Whether an expression would trigger an if/unless/while/when or not
+Command:
+	A method that mutates its receiver.
 Initializer:
 	There are several kinds of initializers in halsbe.
 	Most common initializers are object initializers.
 	You can also have initializers for global and instance-variables.
 	The default initializer for variables raises an exception.
+InvariantViolation:
+	Whenever an object has been modified but its resulting state is in contradiction to
+	the invariants of the object, an InvariantViolation is raised.
 Iterator:
+	An object that allows to iterate over the values of a collection.
 Loop:
+	A construct to execute instructions repeatedly
+Method:
+	Umbrella term for commands and queries.
 Object:
+	Objects represent a layer of encapsulation.
+	Its internal layout consists of:
+		-A memory fragment (consecutive bytes, randomly addressable)
+		-A map of instance variables
+		-A map of eigenmethods (methods that belong only to this object)
+		-A reference to the template object
+		-A set of flags
+			-frozen:      the object can't be mutated
+			-readlocked:  a reading method is in use
+			-writelocked: a writing method is in use
+			-istemplate:  object can be instanciated
+			-observed:    observer must be informed on object mutation
+	Access to the internals are provided via methods. Methods are the way to communicate
+	between objects. The amount of direction is fully controlled by the object.
+Parameter:
+	Values a method expects (required parameters) or accepts (optional parameters) in a call.
+	Also see Argument.
+PostconditionViolation:
+	When a method has been executed and the state of the receiver or the return value
+	are in contradiction to the postcondition, a PostconditionViolation is raised.
+PreconditionViolation:
+	When a method is called but the arguments are in contradiction to the postcondition,
+	a PostconditionViolation is raised.
+Protocol:
+	A set of methods an object responds to
+	Optionally you can specify the first n arguments for individual methods
+	Optionally per argument you can specify to what protocol they must adhere
+ProtocolViolation:
+	If an object is required to adhere to a protocol but at a later time due
+	to e.g. a Conditional loses the ability to adhere to the protocol then it
+	is considered a protocol violation and will result in an exception.
+Query:
+	A method that does not mutate the receiver
 Receiver:
 	In a method call, the receiver is the object the method is called upon.
+	The subject so to say, while the method is the verb (command, "do"), a noun (attribute, "has"),
+	or an adjective (..., "as") and arguments are the objects.
 Trait:
 	A trait is a container for methods and instance-variable initializers.
 	Traits can be mixed into objects so those objects can use the trait's
 	methods and initializers.
+Violation
+	See InvariantViolation, PreconditionViolation, PostconditionViolation and ProtocolViolation

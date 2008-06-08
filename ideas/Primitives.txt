@@ -1,10 +1,13 @@
 PRIMITIVES
 
 About
-	Primitives are keywords that provide pseudo-methods. They are used to bootstrap
-	halsbe.
+	The word primitives is generally used for things not implemented in halsbe.
+	There are 2 main cases of primitives. One is object implementations provided
+	by the execution environment, the other are keywords that provide
+	pseudo-methods. So those keywords look like objects while they in fact are
+	not.
 
-List
+List of primitive Keywords
 	executable: The current executable (argv[0] in C)
 	argv:       arguments passed in at program start
 	stdio:      IO.combine(stdin, stdout)
@@ -31,8 +34,9 @@ List
 		-owner
 		-caller
 
+
 Other things that require primitives or wrappers
 	foreign function interface
-	stdin/-out/err
+	stdin/-out/-err
 	symbols/symboltable
 	method invocation
