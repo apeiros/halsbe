@@ -1,5 +1,0 @@
-SIGTERM
-fork.rb:6:in `system'
-fork.rb:6
-fork.rb:3:in `fork'
-fork.rb:3
