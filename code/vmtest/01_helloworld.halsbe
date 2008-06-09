@@ -2,7 +2,7 @@
 author:   me
 revision: 1
 encoding: utf-8
-import:   halsbe.module.cli
+import:   halsbe/CLI
 +++
 
 :Application.write_line(%u'Hello World!')
