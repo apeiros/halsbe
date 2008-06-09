@@ -1,0 +1,6 @@
+IDIOMS
+
+Execute code only if it is the mainfile (aka __FILE__ == $0 in ruby):
+	Halsbe.main { code }
+
+	  
