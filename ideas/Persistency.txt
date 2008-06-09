@@ -1,0 +1,5 @@
+PERSISTENCY
+
+Employing contracts for the inner structuring of data would enable
+transparent automatically versioned persistency.
+Embedded migrations could help importing old data.

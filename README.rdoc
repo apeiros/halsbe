@@ -14,3 +14,10 @@ At the moment, the interesting stuff can be found in (roughly in this order):
 * /ideas -> my thoughts spilled on digital paper
 * /discussions -> exchanges with others on irc or other media (only added with consent)
 
+THANKS
+
+Alphabetically
+* eek: for the discussions
+* manveru: for showing me tools, letting me (ab-)use him for bouncing and for oxid
+* matz (and all ruby contributors): for ruby
+* raggi: for the discussions

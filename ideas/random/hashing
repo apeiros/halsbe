@@ -1,0 +1,4 @@
+32bit hash
+left-shift to log2(hash size) to get the bucket address
+right-shift to log2(hash size) to get the 2nd bucket address
+depending on how filled the bucket is, use either the first or the second bucket
