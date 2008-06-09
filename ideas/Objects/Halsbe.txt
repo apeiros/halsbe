@@ -1,0 +1,18 @@
+DESCRIPTION
+
+Provides methods to register file- or application-based callbacks.
+
+Queries:
+	'version'
+		The halsbe version
+
+Methods:
+	'main:(*args)'
+		A block passed to on_main is executed if the file containing
+		it is the script that is run (and not e.g. an imported file).
+
+	'import:(file, *args)'
+		A block passed to on_import is executed if the file is imported
+		by another file.
+		The callback is executed in the context of imported file, not of
+		the importing file.
