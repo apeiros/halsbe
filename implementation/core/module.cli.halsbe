@@ -3,19 +3,67 @@ author:   Stefan Rusterholz
 revision: $Rev$
 date:     $Date$
 encoding: utf-8
+mixin:
+	:Current:     :CLI:IO
+	:Application: :CLI
 +++
-
----
-// within an export callback
-
-:Application.mixin 'CLI'
----
 
 ---
 The CLI module provides rudimentary methods for Command Line Interface
 Applications.
 ---
 .module 'CLI':
+
+	---
+	The CLI:IO module is used to extend Current with the standard in/out/err
+	IOs.
+	---
+	.module 'IO':
+		---
+		The standard IO, read/writable
+		---
+		.query 'stdio':
+			body:
+				returns: stdio
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard in IO, read only
+		---
+		.query 'in':
+			body:
+				returns: stdin
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard out IO, write only
+		---
+		.query 'out':
+			body:
+				returns: stdout
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard error IO, write only
+		---
+		.query 'log':
+			body:
+				returns: stderr
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+
 	.specification:
 		// FIXME implement
 
@@ -38,7 +86,7 @@ Applications.
 				returned.of_type :List
 
 	---
-	The arguments passed to this executable
+	The environment passed to this executable
 	---
 	.query 'env':
 		body:
@@ -49,66 +97,21 @@ Applications.
 				returned.of_type :HashMap
 
 	---
-	The standard IO, read/writable
-	---
-	.query 'stdio':
-		body:
-			returns: stdio
-
-		postconditions:
-			'Is an IO':
-				returned.of_type :IO
-
-	---
-	The standard in IO, read only
-	---
-	.query 'stdin':
-		body:
-			returns: stdin
-
-		postconditions:
-			'Is an IO':
-				returned.of_type :IO
-
-	---
-	The standard out IO, write only
-	---
-	.query 'stdout':
-		body:
-			returns: stdout
-
-		postconditions:
-			'Is an IO':
-				returned.of_type :IO
-
-	---
-	The standard error IO, write only
-	---
-	.query 'stderr':
-		body:
-			returns: stderr
-
-		postconditions:
-			'Is an IO':
-				returned.of_type :IO
-
-	---
 	Write a line to stdout. Always appends a newline.
 	If multiple strings are passed, each is written on a new line.
 	The arguments must be convertable to ByteStream's
 	---
-	.delegate_query 'write_line', stdout
+	.delegate_query 'write_line', :Current.out
 
 	---
 	Write a line to stderr. Always appends a newline.
 	If multiple strings are passed, each is written on a new line.
 	The arguments must be convertable to ByteStream's
 	---
-	.delegate_query 'log', stderr, 'write_line'
+	.delegate_query 'log', stderr, :Current.in
 
 	---
 	Read a line from stdin.
 	Returns nil if end of document is reached.
 	---
-	.delegate_query 'read_line', stdin
-
+	.delegate_query 'read_line', :Current.log
