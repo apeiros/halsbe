@@ -1,0 +1,68 @@
+#!/usr/bin/env halsbe
+author:   Stefan Rusterholz
+revision: $Rev$
+date:     $Date$
+encoding: utf-8
+extend:
+	:Current:     :CLI:IO
++++
+
+---
+The CLI:IO module is used to extend Current with the standard in/out/err
+IOs.
+---
+.module 'CLI:IO':
+	.specification:
+		"Provides access to a read- and writeable standard-io":
+			Current.io.readable and Current.io.writable
+		"Provides access to a read-only standard-in (in)":
+			Current.in.readable and not Current.in.writable
+		"Provides access to a write-only standard-out (out)":
+			not Current.out.readable and Current.out.writable
+		"Provides access to a write-only standard-error (log)":
+			not Current.log.readable and Current.log.writable
+		
+
+		---
+		The standard IO, read/writable
+		---
+		.query 'io':
+			body:
+				returns: stdio
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard in IO, read only
+		---
+		.query 'in':
+			body:
+				returns: stdin
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard out IO, write only
+		---
+		.query 'out':
+			body:
+				returns: stdout
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO
+	
+		---
+		The standard error IO, write only
+		---
+		.query 'log':
+			body:
+				returns: stderr
+	
+			postconditions:
+				'Is an IO':
+					returned.of_type :IO

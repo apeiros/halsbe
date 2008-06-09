@@ -3,8 +3,8 @@ author:   Stefan Rusterholz
 revision: $Rev$
 date:     $Date$
 encoding: utf-8
-mixin:
-	:Current:     :CLI:IO
+import:   halsbe/CLI/IO
+extend:
 	:Application: :CLI
 +++
 
@@ -13,59 +13,17 @@ The CLI module provides rudimentary methods for Command Line Interface
 Applications.
 ---
 .module 'CLI':
-
-	---
-	The CLI:IO module is used to extend Current with the standard in/out/err
-	IOs.
-	---
-	.module 'IO':
-		---
-		The standard IO, read/writable
-		---
-		.query 'stdio':
-			body:
-				returns: stdio
-	
-			postconditions:
-				'Is an IO':
-					returned.of_type :IO
-	
-		---
-		The standard in IO, read only
-		---
-		.query 'in':
-			body:
-				returns: stdin
-	
-			postconditions:
-				'Is an IO':
-					returned.of_type :IO
-	
-		---
-		The standard out IO, write only
-		---
-		.query 'out':
-			body:
-				returns: stdout
-	
-			postconditions:
-				'Is an IO':
-					returned.of_type :IO
-	
-		---
-		The standard error IO, write only
-		---
-		.query 'log':
-			body:
-				returns: stderr
-	
-			postconditions:
-				'Is an IO':
-					returned.of_type :IO
-	
-
 	.specification:
-		// FIXME implement
+		"Provides an 'arguments' query in :Application":
+			:Application.responds_to 'arguments'
+		"Provides an 'env' query in :Application":
+			:Application.responds_to 'env'
+		"Provides a 'write_line' query in :Application":
+			:Application.responds_to 'write_line'
+		"Provides a 'read_line' query in :Application":
+			:Application.responds_to 'read_line'
+		"Provides a 'log' query in :Application":
+			:Application.responds_to 'log'
 
 	---
 	The name of the current executable (argv[0] in C)
