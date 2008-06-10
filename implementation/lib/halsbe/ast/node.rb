@@ -64,6 +64,10 @@ module Halsbe
 					"#{@nodes.map{|node|node.pretty(indent+1)}.join(",\n")}\n#{idt}>"
 				end
 			end
+			
+			def ast
+				raise "This node doesn't have an AST"
+			end
 		end
 	end
 end

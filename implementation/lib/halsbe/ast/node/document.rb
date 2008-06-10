@@ -13,6 +13,10 @@ module Halsbe
 				def inline_data
 					@nodes.last
 				end
+				
+				def ast
+					[metadata.ast, code.ast, inline_data.ast]
+				end
 			end
 		end
 	end
