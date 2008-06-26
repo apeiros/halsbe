@@ -1,0 +1,29 @@
+CONCURRENCY
+===========
+
+Use-cases:
+- User Interfaces
+- Daemons accepting multiple requests per time
+- Applications that have to wait for resources (IO)
+
+Premisses:
+- Synchronization is slow
+- Avoid synchronization or delay it (optimistic concurrency)
+
+
+Possible models:
+- No shared state. A thread is basically a fork within the VM.
+  Threads use ITC to share data.
+- Exclusive access
+
+
+Datastructures:
+- Queue: one to one
+- Funnel: many to one
+
+Locks
+- Mutex: one to none (exclusion only)
+- Monitor: 
+- ConditionVariable
+
+

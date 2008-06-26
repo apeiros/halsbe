@@ -1,0 +1,141 @@
+apeiros	I got (for the contracts) query and command separation. that is, queries must not (and can not) alter state.
+MenTaLguY	ok
+apeiros	one idea I had is to have 2 flag bits, one for read-only locking, one for write-only locking
+apeiros	so within a threaded environment, the scheduler (which manages the locks) would only have to apply a bitmask for queries
+apeiros	as long as the only a readlock is applied, queries could proceed
+apeiros	an augmentation of that idea would be, to let queries automatically become futures
+apeiros	which would be either processed when there's free time, the result needed or a write-lock being acquired
+apeiros	good idea? bad idea? too vague? :)
+MenTaLguY	vague, perhaps
+MenTaLguY	I think you need to consider more what will be exposed as part of the language semantics, and what is just an implementation strategy
+apeiros	well, query/command is already necessarily exposed semantically due to contracts (you must not call commands in postconditions - that'd make the whole thing useless)
+apeiros	so I thought "why not exploit the fact that we know what methods change state and which not?"
+apeiros	since I'd say in most apps queries are far far more often called than commands
+MenTaLguY	so basically you're distinguishing between functions which side effects and those which do not
+MenTaLguY	s/which/which have/
+apeiros	if side effect is defined as "mutates the receivers state", then yes
+MenTaLguY	and enforcing that functions which should not have side effects do not call functions that do, as part of the contract
+MenTaLguY	ah
+apeiros	hm, actually that is wrong. "which mutates any objects state"
+MenTaLguY	so side-effects, yes
+apeiros	yes, I do distinguish that.
+MenTaLguY	what about IO?
+apeiros	it's necessary. imagine a postcondition that mutates the object. you just validated the contract with the previously ran postconditions and now you invalidate them via a method that changes the state?
+MenTaLguY	I don't disagree
+apeiros	if it is buffered, then the buffer is probably considered state.
+MenTaLguY	I think you'll find that you'll need to consider all IO to be mutation
+apeiros	might well be that all methods on an IO would have to be commands.
+apeiros	though it might be possible to encapsulate that properly
+apeiros	hm, but then again, reading from a buffer means that it expires...
+apeiros	ya, well, in the worst case all IO methods will be commands
+apeiros	IO is one of the kind of objects that have to hook into the VM
+MenTaLguY	yes
+apeiros	those are slightly special anyway
+apeiros	I intend to examine rubinius' FFI class
+apeiros	I heard it made FFI/ABI incredibly simple and nice
+apeiros	and IO after all is an FFI to system calls
+apeiros	are there "strategies" as to handle locking/semphores/queues? at the moment the only real approach I see is using one green thread to handle all locking business, to avoid any race conditions... but I don't know, the solution seems kinda underwhelming :-S
+apeiros	as in: there's one single object that handles all scheduling and locking. if a thread tries to acquire a lock it will signal it to the scheduling thread and that will handle the request
+apeiros	the signaling would be the only one that has to rely on hardware primitives
+apeiros	(via the VM)
+MenTaLguY	that is certainly one way to do it, but you'll hit concurrency walls quickly
+apeiros	such as? and after that: other ways?
+MenTaLguY	well, if everything's being serialized through messages passed to/from a single object, the object will obviously be a bottleneck
+MenTaLguY	everybody has to talk to it all the time
+apeiros	true, once for every method call
+apeiros	(within a threaded environment that is)
+MenTaLguY	aside from reducing the amount of possible concurrency, it also chews up memory bandwidth
+apeiros	why is that?
+MenTaLguY	because if those threads are on different processors they have to communicate over the memory bus
+MenTaLguY	to get to your central dispatcher object
+apeiros	oh, ouch, right
+apeiros	so what would alternative approaches be?
+MenTaLguY	manage locks and queues and so forth locally
+apeiros	hm, but how does one avoid race conditions then?
+apeiros	is a lock "owned" by one "atomic processing unit" (cpu core?)?
+apeiros	also wouldn't another read happening to run on another CPU have to use the bus with locally managed locks too?
+MenTaLguY	yep
+MenTaLguY	but usually things are more managable if everyone doesn't have to talk to the same place
+apeiros	heh, now the question is: yep to...?
+apeiros	hm
+MenTaLguY	oh, to the last one
+MenTaLguY	with the bus
+apeiros	ok
+MenTaLguY	no, locks are generally not managed by a particular core
+MenTaLguY	I think you really need to study existing implementations of things
+apeiros	any exemplary implementation?
+apeiros	(unfortunately my copy of the dragon book hasn't come yet - but I hope it covers that topic too...)
+apeiros	also I somewhat expect TAOCP to have a chapter on concurrency :)
+apeiros	(otherwise I'd have to go visit knuth and glare at him!)
+MenTaLguY	I don't think TAOCP is very good for concurrency
+apeiros	outdated?
+MenTaLguY	ignored
+MenTaLguY	mostly
+apeiros	huh? I don't follow...?
+MenTaLguY	It isn't a subject TAOCP really touches on.
+apeiros	hrm, ok, so separate literature on that too :-S
+MenTaLguY	the field is still rapidly evolving, and it also isn't an area that Knuth is very knowledgable in
+apeiros	ok, good to know that it also happens to the best ;-)
+MenTaLguY	(incidentally, that is what Knuth said in an interview, it isn't my own assessment of him :)
+apeiros	hehe
+apeiros	well, I'd actually trust your assessment to a good extent
+MenTaLguY	(I don't know enough about his background with concurrency to make an assessment of him, he seldom writes about it)
+apeiros	maybe because of him not being very knowledgable
+apeiros	after all, if you don't know much about a topic, better just listen?
+MenTaLguY	probably
+MenTaLguY	he's also certainly got his hands full with the stuff he is writing about
+apeiros	heh, yes, I can imagine
+apeiros	do you know what the generally available hardware primitives to handle concurrency are?
+apeiros	as in: what could I expect as tools given to me to work with and come up with my own model to handle concurrency?
+apeiros	(I actually tried to gather that info from the web but utterly failed :-S)
+MenTaLguY	my best advice is not to come up with your own model
+MenTaLguY	find an existing model and build from that
+MenTaLguY	and as far as hardware primitives go, you won't really get much help from the hardware
+MenTaLguY	you'll need memory barriers and some kind of compare-and-swap instruction
+MenTaLguY	at least
+apeiros	heh, that is certainly a good advice. but if I did that, it wouldn't be to build something better than what exists already. it'd be the same as with writing my own VM: try to solve the problems on my own and learn a good bit doing it.
+MenTaLguY	it's basically all you can hope for from contemporary hardware anyway
+apeiros	I'm an excellent learner by doing
+apeiros	compare-and-swap - any googleable terms for that?
+MenTaLguY	well, that's mostly useful for lockfree things
+MenTaLguY	but "compare and swap" is perfectly googlable
+MenTaLguY	lockfree stuff is *hard*
+apeiros	ah, ok
+apeiros	heh
+MenTaLguY	it's even hard for people like Doug Lea
+*	apeiros googles doug lea
+MenTaLguY	I just finished a contract job where I had to implement some lockfree stuff
+MenTaLguY	thankfully I had some existing models to look at, although a few things I had to invent out of whole cloth
+apeiros	g, thanks for that term "invent out of whole cloth"
+apeiros	so far I always used "pulled it out of my a.."
+apeiros	hoho, Lock-Free Linked Lists Using Compare-and-Swap - sounds like a hit
+apeiros	oooh, ok, seems CAS is what I was looking for all along
+apeiros	my main concern was always that writing a value and retrieving a change isn't race condition free
+apeiros	but if the CPU guarantees it to be atomic
+MenTaLguY	unfortunately that's only the beginning
+apeiros	mayb I should have googled for 'atomic cpu instructions'
+apeiros	*maybe
+MenTaLguY	you also need to be concerned with the visibility of writes from one CPU to another
+apeiros	what are you thinking of?
+apeiros	ah
+MenTaLguY	that they show up at all, and in the correct order
+MenTaLguY	hence, memory barriers
+apeiros	true. and with all going insane about 10 core, 100 core, 1000 core CPUs and then even multiple CPUs of those "manycore" cpus...
+apeiros	well, the nice thing is: in the worst case I can just ignore threading completly. but I'd be quite sad if I had to.
+MenTaLguY	I think that's getting harder these days
+apeiros	after all it's a great opportunity to learn shitloads about it.
+apeiros	yes, but all the more important to have proper basic toolset to deal with it
+apeiros	my feeling (which might be due to simple ignorance) is that concurrency tools these days are underwhelming at best
+apeiros	I mean I haven't seen a single testing harras for concurrent models
+MenTaLguY	yes, the toolset is quite lacking
+MenTaLguY	by a strict reading of the spec, C++ isn't even guaranteed to allow you to write a correct concurrent program
+MenTaLguY	(and it actually conflicts with requirements of the pthreads spec in some ways)
+MenTaLguY	they're working on getting that sorted out in the next C++ release
+apeiros	C++0x?
+MenTaLguY	yeah
+MenTaLguY	I've gotta step out for a bit
+MenTaLguY	later
+apeiros	one question:
+MenTaLguY	yes?
+apeiros	do you mind if I put this conversation into the halsbe repo?
+MenTaLguY	that's fine

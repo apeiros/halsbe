@@ -21,8 +21,6 @@ main(argc, argv, envp)
 	int argc;
 	char **argv, **envp;
 {
-	int i;
-
 #ifdef _WIN32
 	NtInitialize(&argc, &argv);
 #endif

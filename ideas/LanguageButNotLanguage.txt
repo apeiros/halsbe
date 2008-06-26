@@ -1,0 +1,9 @@
+LANGUAGE THAT ISN'T LANGUAGE
+============================
+
+Important bits about a language are not by the language itself but several other keyfactors.
+The following is a collection of keyfactors that influence success and adoption:
+
+* Openness
+* Specification/Norming
+* Community

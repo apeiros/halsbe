@@ -19,5 +19,6 @@ THANKS
 Alphabetically
 * eek: for the discussions
 * manveru: for showing me tools, letting me (ab-)use him for bouncing and for oxid
-* matz (and all ruby contributors): for ruby
+* matz (and all ruby contributors): for ruby, which I use to prototype halsbe
 * raggi: for the discussions
+* everybody I forgot to mention: my apologies, please remind me to add you here :)
