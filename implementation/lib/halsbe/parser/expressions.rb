@@ -25,7 +25,7 @@ module Halsbe
 			end
 
 			def literal
-				primary_literal || secondary_literal
+				primary_literal || secondary_literal || code_literal
 			end
 		
 			def expression_no_symbolic_chain

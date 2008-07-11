@@ -1,0 +1,29 @@
++++
+$var: 1 + 2 * 3 - 4
+$var: $var1.absolute + $var2.log(3) * $var4
+$var: $var2.something "literal"
+$var: $var.something "literal", "other"
+:Application.print_line (1, 2, 3, 4, 5).map { |x| $x * $x }.join(%u",")
+:Application.print_line (1, 2, 3, 4, 5).map { |x|
+	$x * $x
+}.join(%u",")
+:Application.print_line (1, 2, 3, 4, 5).map { |x| $x * $x
+}.join(%u",")
+:Application.print_line (1, 2, 3, 4, 5).map { |x|
+	$x * $x }.join(%u",")
+:Application.print_line (1, 2, 3, 4, 5).map { |x|
+$x * $x }.join(%u",")
+:Application.print_line (1, 2, 3, 4, 5).map {
+	|x|
+	$x * $x
+}.join(%u",")
+
+$hash.values(*$keys.map { |s| $s.to_symnpl })
+$hash.values *$keys.map { |s| $s.to_symnpl }
++++
+
+// free arguments are not yet supported
+$local_variable.my_method 1
+$local_variable.my_method 1, 2, 3
+$local_variable->optional
+$local_variable->optional 1, 2, 3

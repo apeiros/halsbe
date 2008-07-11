@@ -1,0 +1,10 @@
++++
+$code: { "some literal" }
+$code: { |x| $x }
+$code: { |x|
+	$x
+}
+$code:
+	"some literal"
+$code: |x|
+	"some literal"
